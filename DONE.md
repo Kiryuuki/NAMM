@@ -46,7 +46,13 @@ ARR Cockpit is a high-density, Cyberpunk 2077-themed PWA dashboard designed for 
 - [x] API clients verified against live services (Radarr, Sonarr, Jellyfin, TMDB).
 - [x] Browser verification of all UX flows and animations.
 
-## 5. Deployment Instructions
+## 5. Security & Privacy
+- **Secret Management**: All API keys and sensitive URLs are strictly managed via Vite environment variables (`import.meta.env`).
+- **Safety**: A comprehensive `.gitignore` ensures that `.env` files, build artifacts, and sensitive editor data are never uploaded to GitHub.
+- **Audit**: Verified that no hardcoded keys or internal URLs exist in the source code.
+- **Template**: Provided `.env.example` as a safe starting point for new deployments.
+
+## 6. Deployment Instructions
 1.  Ensure `.env` is populated with real service URLs and API keys.
 2.  Run `docker compose up -d` to start the dashboard on port `3500`.
 3.  For production, deploy the repository via Dokploy UI.

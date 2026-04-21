@@ -880,6 +880,12 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - All components use new section-header pattern with yellow pip indicator
 - Phase 11.6 Trending Refinements completed: released-only filter, library exclusion filter, enhanced hover cards with IMDB links.
 - Phase 12 Docker + Deploy completed: Dockerfile, nginx.conf, and docker-compose.yml verified.
+- Phase 13 Branding completed: Renamed project to NAMM (Not Another Media Manager).
+- Phase 14 Security Audit completed: 
+    - Enhanced .gitignore with industry-standard exclusions (keys, certs, build artifacts).
+    - Verified zero hardcoded secrets in the source code (all keys use `import.meta.env`).
+    - Created .env.example as a safe template for users.
+- Created README.md and initialized Git repository (fixed .gitignore).
 - Production build verified with `npm run build`.
 - Final DONE.md completion report generated in project root.
 - Verified live at localhost:5173 — real API data, all effects active
