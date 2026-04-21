@@ -1,0 +1,74 @@
+
+/* ── Upcoming card: date overlay + type badge ── */
+.type-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-family: var(--font-brand);
+  font-size: 7px;
+  padding: 3px 6px;
+  z-index: 2;
+}
+
+.type-badge.movie {
+  background: rgba(252, 227, 0, 0.15);
+  border: 1px solid var(--cp-yellow);
+  color: var(--cp-yellow);
+}
+
+.type-badge.tv {
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid var(--cp-cyan);
+  color: var(--cp-cyan);
+}
+
+.upcoming-date-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(10,10,12,0.9));
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 16px 8px 8px;
+  text-align: center;
+}
+
+/* ── Queue: status text colors ── */
+.status-text.downloading { color: var(--cp-yellow); }
+.status-text.completed   { color: var(--cp-cyan); }
+.status-text.failed      { color: var(--cp-magenta); }
+.status-text.queued      { color: var(--cp-cyan); }
+.status-text.paused      { color: var(--text-secondary); }
+
+/* ── Discovery section spacing ── */
+.discovery-section {
+  margin-bottom: var(--space-32);
+}
+
+/* ── Library panel header upgrade ── */
+.library-header {
+  margin-bottom: var(--space-16);
+}
+
+/* ── Sidebar: Layout (Top -> Bottom) ── */
+#sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar-nav {
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--border-default);
+}
+
+#download-queue {
+  flex: 1;
+  min-height: 0;
+  border-bottom: 2px solid var(--border-default);
+}
+
+#stats-panel {
+  flex-shrink: 0;
+}

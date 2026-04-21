@@ -1,0 +1,15 @@
+services:
+  namm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: namm
+    ports:
+      - "3500:80"
+    restart: unless-stopped
+    env_file:
+      - .env
+
+networks:
+  default:
+    name: namm-net

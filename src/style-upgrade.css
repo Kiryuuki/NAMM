@@ -1,0 +1,677 @@
+
+
+/* ═══════════════════════════════════════════════════════════
+   PHASE 10 — AESTHETICS UPGRADE
+   ReactBits-inspired effects, layout improvements, typography
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Layout: Navbar height boost + spacing ── */
+:root {
+  --navbar-height: 64px;
+  --sidebar-width: 340px;
+}
+
+#navbar {
+  height: var(--navbar-height);
+  padding: 0 var(--space-16);
+  gap: var(--space-16);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: 0 1px 0 0 rgba(252, 227, 0, 0.08);
+}
+
+/* ── Brand: larger, glitch hover wired via JS ── */
+.brand {
+  font-size: 14px;
+  letter-spacing: 2px;
+  animation: none; /* JS-driven glitch now */
+  text-shadow: 0 0 8px rgba(252, 227, 0, 0.4);
+}
+.brand:hover {
+  animation: none; /* overridden by glitch-hover JS */
+}
+
+/* ── Navbar search: more prominence ── */
+#search-bar-container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+#universal-search {
+  font-size: 14px;
+  padding: 10px var(--space-16);
+  background: rgba(15, 15, 20, 0.9);
+  caret-color: var(--cp-yellow);
+}
+
+#universal-search::placeholder {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+#universal-search:focus {
+  box-shadow: 0 0 0 1px var(--cp-yellow), 0 0 20px rgba(252, 227, 0, 0.2);
+}
+
+/* ── Section labels: bigger, bolder ── */
+.label,
+.discovery-section .label,
+.library-header .label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cp-yellow);
+  margin-bottom: var(--space-12);
+  display: block;
+  text-shadow: 0 0 6px rgba(252, 227, 0, 0.3);
+}
+
+/* Sidebar section headers */
+.section-header {
+  font-family: var(--font-brand);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  padding: var(--space-8) var(--space-12);
+  border-bottom: 1px solid var(--border-default);
+  margin-bottom: var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.section-header::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--cp-yellow);
+  box-shadow: 0 0 6px var(--cp-yellow);
+  flex-shrink: 0;
+}
+
+/* ── Stats panel: bigger values ── */
+.stat-value {
+  font-size: 26px;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-family: var(--font-body);
+  letter-spacing: 1px;
+}
+
+.stat-tile {
+  padding: var(--space-12);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.stat-tile:hover {
+  border-color: rgba(252, 227, 0, 0.4);
+}
+
+/* ── Queue items: more readable ── */
+.queue-title {
+  font-size: 13px;
+  max-width: 200px;
+  font-family: var(--font-body);
+}
+
+.queue-meta {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── Discovery cards: bigger, more informative ── */
+.upcoming-card {
+  width: 200px;
+}
+
+.poster-thumb {
+  aspect-ratio: 2/3;
+  height: auto;
+}
+
+.card-title {
+  font-size: 12px;
+}
+
+.card-date {
+  font-size: 11px;
+}
+
+.poster-grid {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-16);
+}
+
+.card-rating {
+  font-size: 12px;
+  background: rgba(252, 227, 0, 0.12);
+  border: 1px solid rgba(252, 227, 0, 0.3);
+  padding: 4px 8px;
+  display: inline-block;
+}
+
+.card-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.card-footer {
+  height: 130px;
+  padding: var(--space-12);
+}
+
+.card-footer .card-title {
+  font-size: 11px;
+}
+
+/* ── Library cards: bigger footers ── */
+.library-header .label {
+  font-size: 12px;
+}
+
+.filter-btn {
+  font-size: 9px;
+  padding: 6px 14px;
+}
+
+/* ═══════════════════════════════
+   EFFECT: SHINY TEXT (ReactBits)
+   Animated gloss sweep on labels
+   ═══════════════════════════════ */
+.shiny-text {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    110deg,
+    var(--cp-yellow) 0%,
+    var(--cp-yellow) 40%,
+    rgba(255, 255, 255, 0.9) 50%,
+    var(--cp-yellow) 60%,
+    var(--cp-yellow) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shiny-sweep 3s linear infinite;
+}
+
+@keyframes shiny-sweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ═══════════════════════════════
+   EFFECT: BORDER BEAM (ReactBits)
+   Rotating glowing border conic
+   ═══════════════════════════════ */
+.border-beam {
+  position: relative;
+}
+
+.border-beam::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: 0;
+  background: conic-gradient(
+    from var(--beam-angle, 0deg),
+    transparent 0deg,
+    var(--beam-color, #FCE300) 60deg,
+    transparent 90deg
+  );
+  animation: beam-rotate var(--beam-duration, 3s) linear infinite;
+  pointer-events: none;
+}
+
+.border-beam::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--card-surface);
+  z-index: 1;
+}
+
+.border-beam > * {
+  position: relative;
+  z-index: 2;
+}
+
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes beam-rotate {
+  to { --beam-angle: 360deg; }
+}
+
+/* ═══════════════════════════════
+   EFFECT: AURORA (ReactBits)
+   Subtle shifting gradient bg for
+   main panel — doesn't overpower
+   ═══════════════════════════════ */
+#main-panel {
+  position: relative;
+}
+
+.aurora-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.aurora-bg::before {
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 50%;
+  top: -10%;
+  left: -10%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 240, 255, 0.04) 0%,
+    transparent 70%
+  );
+  animation: aurora-drift 12s ease-in-out infinite alternate;
+}
+
+.aurora-bg::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 40%;
+  bottom: -5%;
+  right: -5%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(252, 227, 0, 0.03) 0%,
+    transparent 70%
+  );
+  animation: aurora-drift 16s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes aurora-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(5%, 8%) scale(1.15); }
+}
+
+/* Main panel content sits above aurora */
+.discovery-feed,
+.library-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════
+   EFFECT: PIXEL TRAIL CANVAS
+   Injected by initPixelTrail()
+   ═══════════════════════════════ */
+#pixel-trail {
+  mix-blend-mode: screen;
+  image-rendering: pixelated;
+}
+
+/* ═══════════════════════════════
+   EFFECT: COUNT-UP STAT VALUES
+   initCounters() targets these
+   ═══════════════════════════════ */
+.stat-value.count-up {
+  font-variant-numeric: tabular-nums;
+  display: block;
+}
+
+/* ═══════════════════════════════
+   DISCOVERY SECTION: ranking badge
+   Shows trending rank number
+   ═══════════════════════════════ */
+.rank-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--deep-black);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-family: var(--font-brand);
+  font-size: 8px;
+  padding: 3px 6px;
+  z-index: 2;
+}
+
+.rank-badge.top-3 {
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  text-shadow: 0 0 6px rgba(252,227,0,0.5);
+}
+
+/* ═══════════════════════════════
+   CAROUSEL: dot indicators
+   ═══════════════════════════════ */
+.carousel-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: var(--space-8);
+  justify-content: center;
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--border-default);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.carousel-dot.active {
+  background: var(--cp-yellow);
+  box-shadow: 0 0 6px var(--cp-yellow);
+}
+
+/* ═══════════════════════════════
+   SIDEBAR: improved layout
+   ═══════════════════════════════ */
+#sidebar {
+  width: var(--sidebar-width);
+}
+
+#stats-panel {
+  padding: var(--space-8) var(--space-12) var(--space-12);
+}
+
+#download-queue {
+  padding: var(--space-8) var(--space-12) var(--space-12);
+}
+
+.stats-grid {
+  gap: var(--space-8);
+}
+
+/* ═══════════════════════════════
+   EMPTY STATE: improved
+   ═══════════════════════════════ */
+.empty-state {
+  font-size: 9px;
+  letter-spacing: 1px;
+  gap: var(--space-12);
+  min-height: 100px;
+}
+
+/* ═══════════════════════════════
+   HEALTH DOTS: bigger, labeled
+   ═══════════════════════════════ */
+.health-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.health-label {
+  font-size: 7px;
+}
+
+.health-indicators {
+  gap: var(--space-8);
+}
+
+/* ═══════════════════════════════
+   SYNC INFO: tighter
+   ═══════════════════════════════ */
+.sync-info {
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════
+   PHASE 11 — UX REFINEMENTS
+   Sidebar nav, compressed stats,
+   Search bar move
+   ═══════════════════════════════ */
+
+/* Sidebar Navigation Tabs */
+.sidebar-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sidebar-tabs .nav-tab {
+  width: 100%;
+  padding: var(--space-12) var(--space-16);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 11px;
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.sidebar-tabs .nav-tab:hover {
+  background: rgba(252, 227, 0, 0.03);
+  color: var(--text-primary);
+}
+
+.sidebar-tabs .nav-tab.active {
+  border-left: 3px solid var(--cp-yellow);
+  color: var(--cp-yellow);
+  background: rgba(252, 227, 0, 0.06);
+  font-weight: bold;
+}
+
+.tab-icon {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* Compressed System Status Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+}
+
+.stat-tile.wide {
+  grid-column: span 3;
+}
+
+.stat-tile.span-2 {
+  grid-column: span 2;
+}
+
+/* Search Bar in Main Panel (Discovery) */
+.discovery-feed #search-bar-container {
+  max-width: 100%;
+  margin: 0 0 var(--space-24) 0;
+  width: 100%;
+}
+
+.discovery-feed #universal-search {
+  background: rgba(15, 15, 20, 0.6);
+  border: 1px solid var(--border-default);
+}
+
+/* ═══════════════════════════════
+   PROGRESS BARS: taller, cleaner
+   ═══════════════════════════════ */
+.progress-container {
+  height: 5px;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════
+   SCROLLBAR: styled system-wide
+   ═══════════════════════════════ */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-default); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* ── Unified Card Sizing ── */
+.upcoming-card {
+  width: 200px !important;
+}
+
+.upcoming-card .poster-thumb {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+}
+
+.trending-card {
+  width: 100% !important;
+}
+
+/* Enhanced Hover Overlay for Discovery Cards */
+.trending-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 12, 0.94);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-16);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 5;
+  text-align: center;
+}
+
+.upcoming-card:hover .trending-overlay {
+  opacity: 1;
+}
+
+.trending-overlay .card-desc {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.trending-overlay .card-rating {
+  font-family: var(--font-brand);
+  font-size: 10px;
+  color: var(--cp-yellow);
+  margin-bottom: 4px;
+}
+
+.overlay-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.imdb-link {
+  text-decoration: none;
+  font-size: 9px !important;
+  padding: 6px 10px !important;
+  display: block;
+  width: 100%;
+}
+
+.card-btn-group {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.card-btn-group .cp-button {
+  flex: 1;
+  height: 28px;
+  padding: 0;
+  font-size: 14px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Rank Badge Styling */
+.rank-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--deep-black);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-family: var(--font-brand);
+  font-size: 9px;
+  padding: 2px 6px;
+  z-index: 10; /* Above overlay */
+  transition: all 0.2s ease;
+}
+
+.rank-badge.top-3 {
+  border-color: var(--cp-yellow);
+  color: var(--cp-yellow);
+  box-shadow: 0 0 8px rgba(252, 227, 0, 0.2);
+}
+
+.upcoming-card:hover .rank-badge {
+  border-color: var(--cp-yellow);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════
+   JELLYFIN VIEW: Native Grid
+   ═══════════════════════════════ */
+.jellyfin-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+}
+
+.jellyfin-lib-card {
+  aspect-ratio: 16/9;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--border-default);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.jellyfin-lib-card:hover {
+  border-color: var(--cp-yellow);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4), 0 0 12px rgba(252, 227, 0, 0.2);
+}
+
+.jellyfin-lib-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-12);
+  background: linear-gradient(transparent, rgba(10, 10, 12, 0.9));
+  font-family: var(--font-brand);
+  font-size: 11px;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.jellyfin-lib-label span:first-child {
+  letter-spacing: 1px;
+}
