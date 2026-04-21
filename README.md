@@ -4,7 +4,7 @@
 
 **NAMM** is an enterprise-grade, self-hosted PWA dashboard designed to manage your entire media ecosystem (Jellyfin, Radarr, Sonarr, Prowlarr) from a single, high-density Cyberpunk 2077-themed terminal.
 
-![NAMM Dashboard Mockup](https://raw.githubusercontent.com/username/namm/main/public/screenshots/hero.png)
+![NAMM Dashboard Discovery](screenshots/discovery.png)
 
 ---
 
@@ -15,10 +15,19 @@
 - **Smart Classifier**: Automatic routing for new content (Movies → Radarr, TV → Sonarr).
 - **Premium Discovery**: Interactive trending and upcoming feeds with IMDB deep-linking and one-click management.
 
+![Search & Interaction](screenshots/search_results.png)
+*Universal Search & Real-time Lookup*
+
 ### 📼 Native-Feel Management
 - **Jellyfin Integration**: Native-looking media grid with drill-down views for all your libraries.
 - **Library Tracker**: Monitor the status of your entire collection with real-time health indicators.
 - **Action-First Workflow**: Rapidly add (`+`) or mark as seen (`×`) content directly from the discovery feed.
+
+![Library & Jellyfin](screenshots/library.png)
+*Radarr Library View*
+
+![Interaction](screenshots/card_hover.png)
+*Interactive Hover Overlays*
 
 ### 🖥️ Command Center Interface
 - **High-Density Sidebar**: Merged download queue (Radarr + Sonarr) and real-time system metrics.
