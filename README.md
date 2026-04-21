@@ -46,36 +46,61 @@
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation & Deployment
 
-### 1. Prerequisites
-- Docker & Docker Compose
-- API Keys for Radarr, Sonarr, Jellyfin, and TMDB
+NAMM is designed to be lightweight and portable. You can deploy it via Docker, self-host it on a VPS, or run it locally for development.
 
-### 2. Environment Setup
-Copy `.env.example` to `.env` and fill in your service details:
-```env
-# Jellyfin
-VITE_JELLYFIN_URL=http://your-ip:8096
-VITE_JELLYFIN_KEY=your_key
-
-# Radarr
-VITE_RADARR_URL=http://your-ip:7878
-VITE_RADARR_KEY=your_key
-
-# Sonarr
-VITE_SONARR_URL=http://your-ip:8989
-VITE_SONARR_KEY=your_key
-
-# Discovery
-VITE_TMDB_KEY=your_tmdb_key
-```
-
-### 3. Deploy
+### 1. Configure Environment
+Before deploying, create your `.env` file by copying the template:
 ```bash
+cp .env.example .env
+```
+Fill in your service details. **Important:** URLs must be accessible from your browser (e.g., use your local IP `192.168.x.x` if running locally).
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_JELLYFIN_URL` | Your Jellyfin server URL |
+| `VITE_RADARR_URL` | Your Radarr instance URL |
+| `VITE_SONARR_URL` | Your Sonarr instance URL |
+| `VITE_TMDB_KEY` | TMDB API Key for discovery metadata |
+
+---
+
+### 2. Deployment Options
+
+#### Option A: Docker Compose (Recommended)
+This is the easiest way to get NAMM up and running in a production-ready Nginx container.
+```bash
+# Start the container
 docker compose up -d
 ```
-Your terminal is now live at `http://localhost:3500`.
+Your dashboard will be available at `http://localhost:3500`.
+
+#### Option B: Self-Hosting (Dokploy)
+If you are using **Dokploy** for your infrastructure:
+1. Create a new "Docker Compose" application in your Dokploy dashboard.
+2. Link your GitHub repository.
+3. Add your `.env` variables in the Dokploy environment settings.
+4. Deploy. Dokploy will automatically handle the build and serve NAMM on your configured domain.
+
+#### Option C: Local Development
+To run NAMM locally with hot-reloading:
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+The app will be live at `http://localhost:5173`.
+
+---
+
+### 3. PWA Installation
+NAMM is a Progressive Web App. Once deployed:
+1. Open the URL in Chrome or Edge.
+2. Click the **"Install"** icon in the address bar (or "Add to Home Screen" on mobile).
+3. NAMM will now behave like a native desktop/mobile application with its own window and offline shell.
 
 ---
 
