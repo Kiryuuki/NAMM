@@ -4,6 +4,8 @@
 
 **NAMM** is an enterprise-grade, self-hosted PWA dashboard designed to manage your entire media ecosystem (Jellyfin, Radarr, Sonarr, Prowlarr) from a single, high-density Cyberpunk 2077-themed terminal.
 
+![Uploading {6D4FD09E-3742-43EC-BB40-1AD799E844B7}.png…]()
+
 
 ---
 
