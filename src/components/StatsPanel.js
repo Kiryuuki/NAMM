@@ -10,7 +10,7 @@ export function initStatsPanel(containerId) {
   if (!container) return;
 
   container.innerHTML = `
-    <div class="section-header">[ SYSTEM STATUS ]</div>
+    <div class="section-header decrypt-text shiny-text-auto" data-text="[ SYSTEM STATUS ]">[ SYSTEM STATUS ]</div>
     <div id="stats-grid" class="stats-grid">
       ${'<div class="skeleton" style="height: 70px;"></div>'.repeat(6)}
       <div class="skeleton wide" style="height: 50px; grid-column: span 2;"></div>
@@ -25,14 +25,24 @@ async function updateStats() {
   const grid = document.getElementById('stats-grid');
   if (!grid) return;
 
+  const safeFetch = async (fn, fallback = {}) => {
+    try {
+      const res = await fn;
+      return res && !res.error ? res : fallback;
+    } catch (e) {
+      console.warn(`[Stats] Fetch failed:`, e);
+      return fallback;
+    }
+  };
+
   const [movies, series, missingMovies, missingSeries, sessions, disk, indexers] = await Promise.all([
-    radarr.getMovies(),
-    sonarr.getSeries(),
-    radarr.getMissing(),
-    sonarr.getMissing(),
-    jellyfin.getSessions(),
-    radarr.getDiskspace(),
-    prowlarr.getIndexers()
+    safeFetch(radarr.getMovies(), []),
+    safeFetch(sonarr.getSeries(), []),
+    safeFetch(radarr.getMissing(), { totalRecords: 0 }),
+    safeFetch(sonarr.getMissing(), { totalRecords: 0 }),
+    safeFetch(jellyfin.getSessions(), []),
+    safeFetch(radarr.getDiskspace(), []),
+    safeFetch(prowlarr.getIndexers(), [])
   ]);
 
   const activeStreams = (sessions || []).filter(s => s.NowPlayingItem).length;

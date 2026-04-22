@@ -12,8 +12,8 @@ const GLYPHS = '▓░▒█▄▀■□▪▫◆◇○●◈ABCDEFGHJKLMNOPQRST
 
 export function decryptText(element, opts = {}) {
   const {
-    speed = 40,
-    scrambleCount = 4,
+    speed = 25,
+    scrambleCount = 2,
     onComplete = null,
   } = opts;
 

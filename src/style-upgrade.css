@@ -1,5 +1,4 @@
 
-
 /* ═══════════════════════════════════════════════════════════
    PHASE 10 — AESTHETICS UPGRADE
    ReactBits-inspired effects, layout improvements, typography
@@ -143,9 +142,9 @@
   font-size: 11px;
 }
 
-.poster-grid {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--space-16);
+/* Cards transition */
+.upcoming-card, .library-card, .discovery-card, .jellyfin-lib-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-rating {
@@ -380,9 +379,7 @@
 /* ═══════════════════════════════
    SIDEBAR: improved layout
    ═══════════════════════════════ */
-#sidebar {
-  width: var(--sidebar-width);
-}
+
 
 #stats-panel {
   padding: var(--space-8) var(--space-12) var(--space-12);
@@ -521,157 +518,237 @@
 ::-webkit-scrollbar-thumb { background: var(--border-default); }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
-/* ── Unified Card Sizing ── */
-.upcoming-card {
-  width: 200px !important;
-}
-
-.upcoming-card .poster-thumb {
-  width: 100%;
-  height: auto !important;
-  aspect-ratio: 2/3;
-  overflow: hidden;
-}
-
-.trending-card {
+/* ── Layout Grids ── */
+.poster-grid, .jellyfin-library-grid, .library-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+  gap: var(--space-24) !important;
+  margin-top: var(--space-16);
   width: 100% !important;
 }
 
-/* Enhanced Hover Overlay for Discovery Cards */
-.trending-overlay {
+/* Ensure horizontal scroll containers also behave */
+.horizontal-scroll {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+/* ── Unified Card System ── */
+.upcoming-card, 
+.library-card, 
+.discovery-card, 
+.jellyfin-lib-card,
+.trending-card {
+  width: 200px !important;
+  min-width: 200px;
+  flex-shrink: 0;
+  background: var(--card-surface);
+  border: 2px solid var(--border-default);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  height: fit-content;
+}
+
+.upcoming-card:hover, 
+.library-card:hover, 
+.discovery-card:hover, 
+.jellyfin-lib-card:hover,
+.trending-card:hover {
+  border-color: var(--cp-yellow);
+  box-shadow: 4px 4px 0 0 var(--cp-yellow);
+  transform: translateY(-4px);
+}
+
+.poster-thumb, .card-poster {
+  width: 100% !important;
+  aspect-ratio: 2/3 !important;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.card-footer {
+  padding: var(--space-12) !important;
+  background: rgba(15, 15, 20, 0.5);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 80px !important; /* Standard height for titles */
+}
+
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-title {
+  font-family: var(--font-brand) !important;
+  font-size: 9px !important;
+  line-height: 1.3 !important;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+.card-year, .card-date {
+  font-family: var(--font-body);
+  font-size: 11px !important;
+  color: var(--text-secondary);
+}
+
+/* Status Overlays (Library specific) */
+.status-overlay {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 6px;
+  font-family: var(--font-brand);
+  font-size: 8px;
+  z-index: 10;
+  border: 1px solid currentColor;
+}
+.library-card.downloaded .status-overlay { color: var(--cp-cyan); border-color: var(--cp-cyan); background: rgba(0, 240, 255, 0.1); }
+.library-card.missing .status-overlay { color: var(--cp-magenta); border-color: var(--cp-magenta); background: rgba(255, 45, 120, 0.1); }
+.library-card.unmonitored .status-overlay { color: var(--text-dim); border-color: var(--text-dim); background: rgba(61, 61, 92, 0.1); }
+
+/* Hover Overlays (Discovery/Trending/Library) */
+.trending-overlay, .card-actions-overlay {
   position: absolute;
   inset: 0;
   background: rgba(10, 10, 12, 0.94);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   padding: var(--space-16);
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 5;
   text-align: center;
+  gap: var(--space-12);
 }
 
-.upcoming-card:hover .trending-overlay {
+.upcoming-card:hover .trending-overlay,
+.library-card:hover .card-actions-overlay,
+.discovery-card:hover .trending-overlay {
   opacity: 1;
 }
 
-.trending-overlay .card-desc {
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--text-primary);
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-top: 4px;
-}
-
-.trending-overlay .card-rating {
-  font-family: var(--font-brand);
-  font-size: 10px;
-  color: var(--cp-yellow);
-  margin-bottom: 4px;
-}
-
-.overlay-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.imdb-link {
-  text-decoration: none;
-  font-size: 9px !important;
-  padding: 6px 10px !important;
-  display: block;
-  width: 100%;
-}
-
-.card-btn-group {
-  display: flex;
-  gap: 4px;
-  width: 100%;
-}
-
-.card-btn-group .cp-button {
-  flex: 1;
-  height: 28px;
-  padding: 0;
-  font-size: 14px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Rank Badge Styling */
-.rank-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: var(--deep-black);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
-  font-family: var(--font-brand);
-  font-size: 9px;
-  padding: 2px 6px;
-  z-index: 10; /* Above overlay */
-  transition: all 0.2s ease;
-}
-
-.rank-badge.top-3 {
-  border-color: var(--cp-yellow);
-  color: var(--cp-yellow);
-  box-shadow: 0 0 8px rgba(252, 227, 0, 0.2);
-}
-
-.upcoming-card:hover .rank-badge {
-  border-color: var(--cp-yellow);
-  opacity: 0.6;
-}
-
-/* ═══════════════════════════════
-   JELLYFIN VIEW: Native Grid
-   ═══════════════════════════════ */
-.jellyfin-library-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-16);
-  margin-top: var(--space-16);
-}
-
-.jellyfin-lib-card {
-  aspect-ratio: 16/9;
-  background-size: cover;
-  background-position: center;
-  border: 2px solid var(--border-default);
-  position: relative;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  overflow: hidden;
-}
-
-.jellyfin-lib-card:hover {
-  border-color: var(--cp-yellow);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.4), 0 0 12px rgba(252, 227, 0, 0.2);
-}
-
+/* Jellyfin Library Folder styling */
 .jellyfin-lib-label {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: var(--space-12);
-  background: linear-gradient(transparent, rgba(10, 10, 12, 0.9));
+  background: linear-gradient(transparent, rgba(10, 10, 12, 0.95));
   font-family: var(--font-brand);
-  font-size: 11px;
-  color: var(--text-primary);
-  display: flex;
-  flex-direction: column;
+  font-size: 10px;
+  color: var(--cp-yellow);
+  text-align: center;
+  border-top: 1px solid rgba(252, 227, 0, 0.2);
 }
 
-.jellyfin-lib-label span:first-child {
-  letter-spacing: 1px;
+/* ═══════════════════════════════
+   UX REFINEMENTS: Phase 18
+   ═══════════════════════════════ */
+
+/* 1. Navbar Toggle styling */
+.sidebar-toggle {
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--cp-yellow);
+  font-family: var(--font-brand);
+  font-size: 16px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--space-12);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background: var(--cp-yellow);
+  color: var(--deep-black);
+  box-shadow: 0 0 10px rgba(252, 227, 0, 0.4);
+}
+
+/* 2. Global Transitions for non-jumpy layout */
+#container, #main-panel, #sidebar, .poster-grid, .upcoming-card, .library-card, .trending-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 3. Section Label fix */
+.label, .discovery-section .label, .library-header .label {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 4. Responsive Overrides & Mobile Sidebar */
+@media (max-width: 1024px) {
+  /* No more overlay: sidebar is always there as a 52px column when collapsed */
+  #container {
+    grid-template-columns: 1fr 52px !important;
+  }
+  
+  #sidebar {
+    position: static;
+    width: 52px !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    border-left: 1px solid var(--border-default);
+    box-shadow: none;
+    display: flex !important;
+  }
+  
+  /* When expanded on mobile, it covers more space */
+  #app:not(.sidebar-collapsed) #container {
+    grid-template-columns: 1fr 280px !important;
+  }
+  
+  #app:not(.sidebar-collapsed) #sidebar {
+    width: 280px !important;
+  }
+
+  /* When collapsed (standard state), hide text labels */
+  .sidebar-collapsed .snav-label,
+  .sidebar-collapsed .collapse-label {
+    display: none;
+  }
+
+  #main-panel {
+    padding: var(--space-12);
+  }
+}
+
+@media (max-width: 480px) {
+  .brand {
+    font-size: 11px !important;
+  }
+  
+  /* On very small screens, maybe just 240px when expanded */
+  #app:not(.sidebar-collapsed) #container {
+    grid-template-columns: 1fr 240px !important;
+  }
+  #app:not(.sidebar-collapsed) #sidebar {
+    width: 240px !important;
+  }
 }

@@ -10,7 +10,7 @@ export async function initJellyfinView(containerId) {
   container.innerHTML = `
     <div class="library-container">
       <div class="library-header">
-        <h2 class="label shiny-text" data-text="[ JELLYFIN LIBRARIES ]">[ JELLYFIN LIBRARIES ]</h2>
+        <h2 class="label decrypt-text shiny-text" data-text="[ JELLYFIN LIBRARIES ]">[ JELLYFIN LIBRARIES ]</h2>
       </div>
       <div id="jellyfin-grid" class="jellyfin-library-grid">
         ${'<div class="skeleton" style="aspect-ratio: 16/9"></div>'.repeat(4)}
@@ -34,12 +34,19 @@ function renderLibraryGrid(libraries) {
   }
 
   grid.innerHTML = libraries.map(lib => {
-    const imageUrl = `${JELLYFIN_URL}/Items/${lib.Id}/Images/Primary?maxWidth=500&api_key=${JELLYFIN_KEY}`;
+    const imageUrl = `${JELLYFIN_URL}/Items/${lib.Id}/Images/Primary?maxWidth=400&api_key=${JELLYFIN_KEY}`;
     return `
-      <div class="jellyfin-lib-card" data-id="${lib.Id}" style="background-image: url('${imageUrl}')">
-        <div class="jellyfin-lib-label">
-          <span>${lib.Name.toUpperCase()}</span>
-          <span style="font-family: var(--font-body); font-size: 10px; opacity: 0.7; margin-top: 4px;">${lib.CollectionType || 'MEDIA'}</span>
+      <div class="jellyfin-lib-card" data-id="${lib.Id}">
+        <div class="card-poster" style="background-image: url('${imageUrl}')">
+          <div class="jellyfin-lib-label">
+            <span>${lib.Name.toUpperCase()}</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-title">${lib.Name}</span>
+            <span class="card-year">${lib.CollectionType || 'LIBRARY'}</span>
+          </div>
         </div>
       </div>
     `;
@@ -56,11 +63,11 @@ async function drillDown(libraryId, libraryName) {
 
   container.innerHTML = `
     <div class="library-header" style="display:flex; justify-content:space-between; align-items:center">
-      <h2 class="label shiny-text" data-text="[ ${libraryName} ]">[ ${libraryName} ]</h2>
+      <h2 class="label decrypt-text shiny-text" data-text="[ ${libraryName} ]">[ ${libraryName} ]</h2>
       <button class="cp-button secondary" id="back-to-libs">[ ← BACK ]</button>
     </div>
     <div id="jellyfin-items-grid" class="poster-grid">
-      ${'<div class="skeleton" style="height:300px"></div>'.repeat(8)}
+      ${'<div class="skeleton" style="aspect-ratio: 2/3"></div>'.repeat(8)}
     </div>
   `;
 
@@ -85,8 +92,12 @@ function renderItemsGrid(items) {
     const poster = `${JELLYFIN_URL}/Items/${item.Id}/Images/Primary?maxWidth=400&api_key=${JELLYFIN_KEY}`;
     const year = item.ProductionYear || 'N/A';
     return `
-      <div class="discovery-card">
-        <div class="card-poster" style="background-image: url('${poster}')"></div>
+      <div class="discovery-card jellyfin-item-card" data-id="${item.Id}">
+        <div class="card-poster" style="background-image: url('${poster}')">
+          <div class="trending-overlay">
+            <button class="cp-button mini play-btn" data-id="${item.Id}">▶ PLAY</button>
+          </div>
+        </div>
         <div class="card-footer">
           <div class="card-meta">
             <span class="card-title">${item.Name}</span>

@@ -23,7 +23,7 @@ export function initDownloadQueue(containerId) {
   if (!container) return;
 
   container.innerHTML = `
-    <div class="section-header">[ DOWNLOAD QUEUE ]</div>
+    <div class="section-header decrypt-text shiny-text-auto" data-text="[ DOWNLOAD QUEUE ]">[ DOWNLOAD QUEUE ]</div>
     <div id="queue-list" class="queue-container">
       ${'<div class="skeleton" style="height:80px;margin-bottom:8px"></div>'.repeat(2)}
     </div>
@@ -37,9 +37,19 @@ async function updateQueue() {
   const queueList = document.getElementById('queue-list');
   if (!queueList) return;
 
+  const safeFetch = async (fn, fallback = { records: [] }) => {
+    try {
+      const res = await fn;
+      return res && !res.error ? res : fallback;
+    } catch (e) {
+      console.warn(`[Queue] Fetch failed:`, e);
+      return fallback;
+    }
+  };
+
   const [radarrQueue, sonarrQueue] = await Promise.all([
-    radarr.getQueue(),
-    sonarr.getQueue(),
+    safeFetch(radarr.getQueue()),
+    safeFetch(sonarr.getQueue()),
   ]);
 
   const merged = [

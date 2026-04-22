@@ -3,7 +3,7 @@ import * as radarr from './api/radarr.js';
 import * as sonarr from './api/sonarr.js';
 import * as prowlarr from './api/prowlarr.js';
 import { initNavbar, updateNavbarHealth } from './components/Navbar.js';
-import { initSidebarNav } from './components/SidebarNav.js';
+import { initSidebarNav, setSidebarActiveTab } from './components/SidebarNav.js';
 import { initDownloadQueue } from './components/DownloadQueue.js';
 import { initStatsPanel } from './components/StatsPanel.js';
 import { initDiscoveryPanel } from './components/DiscoveryPanel.js';
@@ -21,29 +21,25 @@ import {
   initShinyText,
 } from './utils/effects.js';
 
-console.log(
-  '%c[SYSTEM] BOOTING ARR COCKPIT...',
-  "color: #FCE300; font-family: 'Press Start 2P'; font-size: 14px;"
-);
+console.log('%c[NAMM] BOOTING...', "color:#FCE300;font-family:'Press Start 2P';font-size:14px;");
 
-/** Health check — polls all service /system/status endpoints */
+/** Poll all service health endpoints */
 async function checkHealth() {
   const [jf, rd, sn, pr] = await Promise.allSettled([
     jellyfin.getSystemInfo(),
     radarr.getSystemStatus(),
     sonarr.getSystemStatus(),
-    prowlarr.getSystemStatus()
+    prowlarr.getSystemStatus(),
   ]);
-
   updateNavbarHealth({
-    jellyfin: jf.status === 'fulfilled' && !jf.value.error,
-    radarr:   rd.status === 'fulfilled' && !rd.value.error,
-    sonarr:   sn.status === 'fulfilled' && !sn.value.error,
-    prowlarr: pr.status === 'fulfilled' && !pr.value.error
+    jellyfin: jf.status === 'fulfilled' && !jf.value?.error,
+    radarr:   rd.status === 'fulfilled' && !rd.value?.error,
+    sonarr:   sn.status === 'fulfilled' && !sn.value?.error,
+    prowlarr: pr.status === 'fulfilled' && !pr.value?.error,
   });
 }
 
-/** Re-init all reactive effects after panel re-render */
+/** Re-init text/counter effects after any panel re-render */
 function refreshEffects() {
   initDecryptAnimations();
   initBorderBeams();
@@ -51,53 +47,50 @@ function refreshEffects() {
   initCounters();
 }
 
-/** Switch main panel view */
+/** Switch main panel — renders correct view and syncs nav state */
 function switchTab(tab) {
-  console.log(`[SYSTEM] SWITCHING TO TAB: ${tab.toUpperCase()}`);
-  
   const mainPanel = document.getElementById('main-panel');
   if (!mainPanel) return;
 
-  // Clear current panel
   mainPanel.innerHTML = '';
 
-  if (tab === 'discovery') {
-    initDiscoveryPanel('main-panel');
-  } else if (tab === 'library') {
-    initLibraryPanel('main-panel');
-  } else if (tab === 'jellyfin') {
-    initJellyfinView('main-panel');
-  }
-  
-  initDecryptAnimations();
+  if (tab === 'discovery')    initDiscoveryPanel('main-panel');
+  else if (tab === 'library') initLibraryPanel('main-panel');
+  else if (tab === 'jellyfin') initJellyfinView('main-panel');
+
+  // Aurora only on discovery (main panel has content-heavy bg)
+  if (tab === 'discovery') initAurora();
+
+  refreshEffects();
+
   refreshEffects();
 }
 
-/** Bootstrap all panels and global effects */
 function initLayout() {
+  // Navbar: brand + health dots only (no search, no tabs)
   initNavbar('navbar');
-  initSidebarNav('sidebar-nav', (tab) => switchTab(tab));
+
+  // Sidebar: collapse btn + search btn + nav tabs
+  initSidebarNav('sidebar-nav', switchTab);
+
+  // Sidebar panels
   initDownloadQueue('download-queue');
   initStatsPanel('stats-panel');
+
+  // Default view
   initDiscoveryPanel('main-panel');
-  
-  // Phase 10 Effects
-  initPixelTrail();
   initAurora();
+
+  // Global effects
+  initPixelTrail();
   initGlitchHover('.brand');
-  
-  initDecryptAnimations();
+  refreshEffects();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initLayout();
   checkHealth();
-
-  // Poll health every 60s
   setInterval(checkHealth, 60_000);
 
-  console.log(
-    '%c[SYSTEM] NEURAL LINK ESTABLISHED.',
-    "color: #00F0FF; font-family: 'Share Tech Mono';"
-  );
+  console.log('%c[NAMM] NEURAL LINK ESTABLISHED.', "color:#00F0FF;font-family:'Share Tech Mono';");
 });

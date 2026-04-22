@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NAMM — Not Another Media Manager</title>
-    <meta name="description" content="NAMM (Not Another Media Manager) — Your media stack, jacked in. Self-hosted PWA dashboard for Jellyfin, Radarr, Sonarr, and Prowlarr.">
+    <meta name="description" content="NAMM — Your media stack, jacked in. Self-hosted PWA for Jellyfin, Radarr, Sonarr, Prowlarr.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,28 +16,31 @@
     <meta name="theme-color" content="#FCE300">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-    <!-- Design system (base) -->
+    <!-- Design system -->
     <link rel="stylesheet" href="/src/style.css">
-    <!-- Phase 10: Aesthetics upgrade — layout, typography, ReactBits effects -->
+    <!-- Phase 10: Aesthetics upgrade -->
     <link rel="stylesheet" href="/src/style-upgrade.css">
     <!-- Phase 10: Component additions -->
     <link rel="stylesheet" href="/src/style-additions.css">
+    <!-- Phase 11: Sidebar collapse + Search modal -->
+    <link rel="stylesheet" href="/src/style-phase11.css">
 </head>
 <body>
     <div id="app">
         <header id="top-nav">
-            <div class="brand shiny-text" data-text="[ NAMM ]">[ NAMM ]</div>
+            <div class="brand glitch-hover" data-text="[ NAMM ]">[ NAMM ]</div>
+            <div id="health-indicators" class="health-indicators"></div>
+            <div class="sync-info">
+                <span class="label">LAST SYNC:</span>
+                <span id="last-sync-time">—</span>
+            </div>
         </header>
         <main id="container">
             <section id="main-panel"></section>
             <aside id="sidebar">
                 <nav id="sidebar-nav"></nav>
-                <div id="download-queue">
-                  <!-- Download queue content -->
-                </div>
-                <div id="stats-panel">
-                  <!-- Stats metrics -->
-                </div>
+                <div id="download-queue"></div>
+                <div id="stats-panel"></div>
             </aside>
         </main>
     </div>

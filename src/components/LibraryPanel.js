@@ -77,11 +77,12 @@ function renderLibraryItems(grid, items, type) {
     }
 
     return `
-      <div class="library-card ${statusClass}" data-id="${item.id || item.movie?.id || item.series?.id}">
+      <div class="library-card ${statusClass}" data-id="${item.id}">
         <div class="card-poster" style="background-image: url('${poster}')">
           <div class="status-overlay">${statusLabel}</div>
           <div class="card-actions-overlay">
-            <button class="cp-button mini sync-btn" title="Manual Search">SYNC</button>
+            <button class="cp-button mini sync-btn" title="Refresh Metadata">SYNC</button>
+            <button class="cp-button mini secondary remove-btn" title="Remove from Library">DELETE</button>
           </div>
         </div>
         <div class="card-footer">

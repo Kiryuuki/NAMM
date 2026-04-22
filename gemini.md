@@ -816,17 +816,8 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
   }
   ```
 
-#### 11.5 Sidebar height budget (approximate, 1080px viewport)
-- Navbar: 64px
-- Remaining: 1016px
-- Nav tabs (3): ~36px each = 108px
-- Download Queue header + ~4 items: ~280px
-- System Status (5 tiles 3-col + disk bar): ~220px
-- Total: ~608px — fits with room to spare
-- If overflow: make Download Queue `flex: 1; overflow-y: auto; min-height: 120px`
 - If overflow: make Download Queue `flex: 1; overflow-y: auto; min-height: 120px`
 
-#### 11.6 Trending Refinements
 - [x] Filter Trending results: Only show items with `release_date` <= Today.
 - [x] Filter Library Items: Exclude items already present in Radarr/Sonarr library.
 - [x] Card Layout: Match `upcoming-card` style (portrait aspect, overlay badges).
@@ -834,7 +825,88 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - [x] Hover Details: Show overview (summary), ratings, and a direct IMDB button (using DDG bang).
 - [x] Style: Add `.discovery-card-hover` styles in `style-upgrade.css`.
 
-### Phase 12 — Docker + deploy
+### Phase 17 — UX Refinements & Mobile Optimization
+- [x] Consistently apply `decrypt-text` glitch effect to all section headers across all panels.
+- [x] Implement collapsible sidebar with toggle button in navbar.
+- [x] Create `Dock.js` for floating bottom navigation on mobile devices.
+- [x] Ensure mobile compatibility with responsive CSS overrides and dock navigation.
+- [x] Sync tab state between sidebar and dock navigation.
+
+
+#### 11.5 Sidebar: collapsible with icon-only mode
+- Add a toggle button at the very top of the sidebar (above nav tabs)
+- Button: `◀` (collapse) / `▶` (expand), Press Start 2P 8px, right-aligned
+- **Expanded** (default, 340px): full sidebar — tabs with text labels, queue, stats visible
+- **Collapsed** (icon-only, 52px): sidebar shrinks to icon strip only
+  - Nav tabs show icon only (no text label), centered vertically
+  - Download Queue and System Status sections are HIDDEN (display:none) when collapsed
+  - Sidebar still fully functional — clicking icons still switches tabs
+  - CSS: `#sidebar { transition: width 0.25s ease; }` + `#app.sidebar-collapsed #sidebar { width: 52px; }`
+  - Toggle icon flips direction on state change
+- Icon set (use Unicode/emoji that match CP2077 theme — consistent across all uses):
+  - DISCOVERY: `◈` (compass/scan)
+  - LIBRARY: `▤` (grid/list)
+  - JELLYFIN: `▶` (play/media)
+  - Toggle collapse: `◀` / `▶`
+  - Search: `⌕` or `◎`
+  - Download Queue header: `⬇`
+  - System Status header: `◉`
+- Collapsed sidebar CSS rule: `.nav-item .nav-label { display: none; }` when `#app.sidebar-collapsed`
+
+#### 11.6 Search: remove from inline position, add as modal
+- Remove the inline search bar from inside `#main-panel` / `.discovery-feed`
+- Add a **SEARCH button** at the top of the sidebar nav section (below toggle, above nav tabs):
+  - Full-width when expanded: `[ ⌕  SEARCH ]` — border 1px solid var(--border-default), Share Tech Mono 11px
+  - Icon-only when collapsed: `⌕` centered
+  - Clicking opens the Search Modal
+- **Search Modal** (full overlay, inspired by Claude's search UI from screenshot):
+  - Overlay: `position:fixed; inset:0; bg:rgba(0,0,0,0.85); z-index:3000; display:flex; align-items:flex-start; justify-content:center; padding-top:80px`
+  - Modal box: `width:700px; max-width:90vw; background:var(--panel-dark); border:2px solid var(--cp-yellow); box-shadow:0 0 40px rgba(252,227,0,0.15)`
+  - Search input at top of modal: full-width, Share Tech Mono 16px, `> JACK IN... search movies & shows_` placeholder, auto-focused on open
+  - Close button top-right: `✕` or press Esc
+  - Results list below input (no poster grid — use **list rows** like Claude's modal):
+    - Each row: `display:flex; gap:16px; padding:12px 16px; border-bottom:1px solid var(--border-default); cursor:pointer`
+    - Left: poster thumbnail 60×90px (2:3 ratio)
+    - Right column:
+      - Line 1: title (Share Tech Mono 14px, var(--text-primary)) + year (dim) + type badge (MOVIE/TV)
+      - Line 2: rating `★ X.X / 10` (cp-yellow, 12px) + genre tags (dim, 11px)
+      - Line 3: overview snippet (~120 chars, var(--text-secondary), 12px, italic)
+    - Hover: `background:var(--surface-hover); border-left:3px solid var(--cp-yellow)`
+    - Selected (keyboard): same as hover
+  - Keyboard nav: ↑↓ arrows move selection, Enter adds selected item, Esc closes
+  - On result click → `classifyAndAdd()` → show toast → modal stays open for more searches
+  - Debounce 400ms on input, min 2 chars to trigger search
+
+#### 11.7 Brand name: update to current value
+- Brand text in navbar is now `[ NAMM ]` (per screenshot — Aldrin renamed the app)
+- Update all references: `data-text="[ NAMM ]"`, console logs, manifest `name`, `short_name`
+- Keep the glitch-hover effect on the brand
+
+#### 11.8 Sidebar nav icon consistency rules (for all future components)
+- Every sidebar section header uses its icon prefix: `⬇ [ DOWNLOAD QUEUE ]`, `◉ [ SYSTEM STATUS ]`
+- Nav items always: `{icon}  {LABEL}` — single space between icon and label
+- Icon font: system Unicode, NOT emoji (no color emoji — they break the mono theme)
+- All icons must render correctly in Share Tech Mono / Press Start 2P fallback context
+- Approved icon vocabulary:
+  | Use | Icon |
+  |-----|------|
+  | Discovery/scan | `◈` |
+  | Library/grid | `▤` |
+  | Jellyfin/media | `▶` |
+  | Search | `⌕` |
+  | Download/queue | `⬇` |
+  | Status/health | `◉` |
+  | Collapse left | `◀` |
+  | Expand right | `▶` |
+  | Active indicator | `▣` |
+  | Back | `←` |
+  | Close | `✕` |
+  | Star/rating | `★` |
+### Phase 18 — UX Polish
+- [x] Remove Mobile Dock navigation (standardize on sidebar/toggle)
+- [x] Implement smooth sidebar hide/show transitions (0.4s cubic-bezier)
+- [x] Stabilize card reflow with smooth transitions on `.poster-grid` and card elements
+- [x] Optimize responsive sidebar overlay for mobile devices
 - [x] `Dockerfile`, `nginx.conf`, `docker-compose.yml`
 - [ ] `docker compose build && docker compose up -d` — verify at `http://localhost:3500`
 - [ ] Deploy via Dokploy
@@ -873,6 +945,7 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 
 ### 2026-04-21
 - Phase 11 spec added to gemini.md by Dash: sidebar nav tabs, search bar Discovery-only, image filter for carousel, Jellyfin native library grid with drill-down
+- Phase 11 extended (11.5-11.8): sidebar collapse/icon-mode, search modal (Claude-style overlay with list rows + ratings), brand rename to NAMM, icon vocabulary standardized
 - Phase 10 Aesthetics Upgrade completed by Dash (Claude Sonnet 4.6)
 - ReactBits effects ported to vanilla JS: DecryptedText, ShinyText, BorderBeam, PixelTrail, Aurora, GlitchHover, CounterAnimation
 - Layout improvements: navbar height 64px, sidebar 340px, stat values 26px, poster min 200px
@@ -896,5 +969,7 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 
 [[claude/MOC — Master Index]]
 [[Projects/Projects Index]]
+
+
 
 

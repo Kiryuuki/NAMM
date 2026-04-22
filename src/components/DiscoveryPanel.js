@@ -4,7 +4,6 @@ import { getTrendingMovies, getTrendingTV, classifyAndAdd } from '../api/classif
 import { formatDate } from '../utils/format.js';
 import { showToast } from './Toast.js';
 import { showAmbiguityModal } from './Modal.js';
-import { initSearchBar } from './SearchBar.js';
 
 export function initDiscoveryPanel(containerId) {
   const container = document.getElementById(containerId);
@@ -12,12 +11,9 @@ export function initDiscoveryPanel(containerId) {
 
   container.innerHTML = `
     <div class="discovery-feed">
-      <div id="search-bar-container">
-        <input type="text" id="universal-search" placeholder="> JACK IN... search movies & shows_" autocomplete="off">
-      </div>
 
       <section id="upcoming-section" class="discovery-section">
-        <h2 class="label shiny-text" data-text="[ UPCOMING RELEASES ]">[ UPCOMING RELEASES ]</h2>
+        <h2 class="label decrypt-text shiny-text" data-text="[ UPCOMING RELEASES ]">[ UPCOMING RELEASES ]</h2>
         <div class="carousel-controls">
           <button class="carousel-btn" id="upcoming-prev">&lt;</button>
           <button class="carousel-btn" id="upcoming-next">&gt;</button>
@@ -33,22 +29,22 @@ export function initDiscoveryPanel(containerId) {
       </section>
 
       <section id="trending-movies-section" class="discovery-section">
-        <h2 class="label shiny-text" data-text="[ TRENDING MOVIES ]">[ TRENDING MOVIES ]</h2>
-        <div class="poster-grid" id="trending-movies-list">
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
+        <h2 class="label decrypt-text shiny-text" data-text="[ TRENDING MOVIES ]">[ TRENDING MOVIES ]</h2>
+        <div class="horizontal-scroll" id="trending-movies-list">
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
         </div>
       </section>
 
       <section id="trending-tv-section" class="discovery-section">
-        <h2 class="label shiny-text" data-text="[ TRENDING TV SHOWS ]">[ TRENDING TV SHOWS ]</h2>
-        <div class="poster-grid" id="trending-tv-list">
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
-          <div class="skeleton" style="height:320px"></div>
+        <h2 class="label decrypt-text shiny-text" data-text="[ TRENDING TV SHOWS ]">[ TRENDING TV SHOWS ]</h2>
+        <div class="horizontal-scroll" id="trending-tv-list">
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
         </div>
       </section>
 
@@ -56,7 +52,6 @@ export function initDiscoveryPanel(containerId) {
   `;
 
   initCarouselControls();
-  initSearchBar();
   loadDiscoveryData();
 }
 
@@ -82,18 +77,29 @@ function initCarouselControls() {
   }, 6000);
 }
 
-/** Fetch all discovery data in parallel */
+/** Fetch all discovery data in parallel, safely */
 async function loadDiscoveryData() {
   const now = new Date().toISOString();
   const in30 = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
+  // Helper to run fetch safely
+  const safeFetch = async (fn, fallback = []) => {
+    try {
+      const res = await fn;
+      return res && !res.error ? res : fallback;
+    } catch (e) {
+      console.warn(`[Discovery] Fetch failed:`, e);
+      return fallback;
+    }
+  };
+
   const [upcomingMovies, upcomingTV, trendingMovies, trendingTV, radarrLib, sonarrLib] = await Promise.all([
-    radarr.getCalendar(now, in30),
-    sonarr.getCalendar(now, in30),
-    getTrendingMovies(),
-    getTrendingTV(),
-    radarr.getMovies(),
-    sonarr.getSeries(),
+    safeFetch(radarr.getCalendar(now, in30)),
+    safeFetch(sonarr.getCalendar(now, in30)),
+    safeFetch(getTrendingMovies(), { results: [] }),
+    safeFetch(getTrendingTV(), { results: [] }),
+    safeFetch(radarr.getMovies()),
+    safeFetch(sonarr.getSeries()),
   ]);
 
   // Extract IDs for filtering
@@ -126,23 +132,23 @@ function renderCardHTML(item, type, options = {}) {
         ${showTypeBadge ? `<div class="type-badge ${typeClass}">${typeLabel}</div>` : ''}
         ${rank ? `<div class="rank-badge ${isTop3 ? 'top-3' : ''}">#${rank}</div>` : ''}
         
-        <div class="card-overlay trending-overlay">
+        <div class="trending-overlay">
+          ${item.vote_average ? `<div class="card-rating">★ ${item.vote_average.toFixed(1)}</div>` : ''}
           <div class="card-desc">${desc}${desc.length >= 140 ? '...' : ''}</div>
-          <div class="card-rating">★ ${rating} / 10</div>
           <div class="overlay-actions">
-            <a href="${imdbUrl}" target="_blank" class="cp-button mini imdb-link">IMDB</a>
-            <div class="card-btn-group">
-              <button class="cp-button mini add-btn" data-type="${type}" title="Add to Downloads">+</button>
-              <button class="cp-button mini secondary seen-btn" title="Mark as Seen">×</button>
+            ${item.id ? `<a href="https://www.themoviedb.org/${type}/${item.id}" target="_blank" class="cp-button mini imdb-link">DETAILS</a>` : ''}
+            <div class="card-btn-group" style="display:flex; gap:4px; width:100%">
+              <button class="cp-button mini add-btn" data-type="${type}" data-tmdb-id="${item.id}">+ ADD</button>
+              <button class="cp-button mini secondary seen-btn" title="Hide from Trending">×</button>
             </div>
           </div>
         </div>
-        
-        ${options.showDateOverlay ? `<div class="upcoming-date-overlay">${shortDate}</div>` : ''}
       </div>
-      <div class="card-info">
-        <div class="card-title" title="${fullDate}">${title}</div>
-        <div class="card-date">${options.showDateOverlay ? shortDate : year}</div>
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="card-title">${item.title || item.name}</span>
+          <span class="card-year">${item.release_date || item.first_air_date ? new Date(item.release_date || item.first_air_date).getFullYear() : 'N/A'}</span>
+        </div>
       </div>
     </div>
   `;
@@ -299,3 +305,5 @@ async function handleAdd(result, type) {
     showToast(`QUEUED: ${result.title || result.name} → ${type === 'movie' ? 'RADARR' : 'SONARR'}`, 'success');
   }
 }
+
+
