@@ -1,6 +1,6 @@
 import * as radarr from '../api/radarr.js';
 import * as sonarr from '../api/sonarr.js';
-import { getTrendingMovies, getTrendingTV, classifyAndAdd } from '../api/classifier.js';
+import { getTrendingMovies, getTrendingTV, getDiscoverAnime, getDiscoverKorean, classifyAndAdd } from '../api/classifier.js';
 import { formatDate } from '../utils/format.js';
 import { showToast } from './Toast.js';
 import { showAmbiguityModal } from './Modal.js';
@@ -41,6 +41,26 @@ export function initDiscoveryPanel(containerId) {
       <section id="trending-tv-section" class="discovery-section">
         <h2 class="label decrypt-text shiny-text" data-text="[ TRENDING TV SHOWS ]">[ TRENDING TV SHOWS ]</h2>
         <div class="horizontal-scroll" id="trending-tv-list">
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+        </div>
+      </section>
+
+      <section id="trending-anime-section" class="discovery-section">
+        <h2 class="label decrypt-text shiny-text" data-text="[ TRENDING ANIME ]">[ TRENDING ANIME ]</h2>
+        <div class="horizontal-scroll" id="trending-anime-list">
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+          <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
+        </div>
+      </section>
+
+      <section id="trending-korean-section" class="discovery-section">
+        <h2 class="label decrypt-text shiny-text" data-text="[ K-DRAMA & K-MOVIES ]">[ K-DRAMA & K-MOVIES ]</h2>
+        <div class="horizontal-scroll" id="trending-korean-list">
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
@@ -93,11 +113,18 @@ async function loadDiscoveryData() {
     }
   };
 
-  const [upcomingMovies, upcomingTV, trendingMovies, trendingTV, radarrLib, sonarrLib] = await Promise.all([
+  const [
+    upcomingMovies, upcomingTV, 
+    trendingMovies, trendingTV, 
+    anime, korean,
+    radarrLib, sonarrLib
+  ] = await Promise.all([
     safeFetch(radarr.getCalendar(now, in30)),
     safeFetch(sonarr.getCalendar(now, in30)),
     safeFetch(getTrendingMovies(), { results: [] }),
     safeFetch(getTrendingTV(), { results: [] }),
+    safeFetch(getDiscoverAnime(), { results: [] }),
+    safeFetch(getDiscoverKorean(), { results: [] }),
     safeFetch(radarr.getMovies()),
     safeFetch(sonarr.getSeries()),
   ]);
@@ -109,6 +136,8 @@ async function loadDiscoveryData() {
   renderUpcoming(upcomingMovies, upcomingTV);
   renderTrending('trending-movies-list', trendingMovies.results || [], 'movie', radarrIds);
   renderTrending('trending-tv-list', trendingTV.results || [], 'tv', sonarrTitles);
+  renderTrending('trending-anime-list', anime.results || [], 'tv', sonarrTitles);
+  renderTrending('trending-korean-list', korean.results || [], 'tv', sonarrTitles);
 }
 
 /** Helper to render a unified discovery card (upcoming or trending) */
@@ -118,19 +147,18 @@ function renderCardHTML(item, type, options = {}) {
   const poster = item.poster || `https://image.tmdb.org/t/p/w342${item.poster_path}`;
   const dateObj = new Date(item.date || item.release_date || item.first_air_date);
   const year = dateObj.getFullYear() || 'N/A';
-  const shortDate = dateObj.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  const fullDate = dateObj.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
-  const rating = item.vote_average ? (Math.round(item.vote_average * 10) / 10).toFixed(1) : 'N/A';
   const desc = (item.overview || '').slice(0, 140);
   const typeLabel = item.media_type === 'movie' ? 'FILM' : 'TV';
   const typeClass = item.media_type === 'movie' ? 'movie' : 'tv';
-  const imdbUrl = `https://duckduckgo.com/?q=!imdb+${encodeURIComponent(title + ' ' + year)}`;
+
+  const episodeTag = item.isEpisode ? `<span class="episode-tag">S${item.seasonNumber}E${item.episodeNumber}</span>` : '';
 
   return `
     <div class="upcoming-card ${options.className || ''}" data-id="${item.id}">
       <div class="poster-thumb" style="background-image: url('${poster}')">
         ${showTypeBadge ? `<div class="type-badge ${typeClass}">${typeLabel}</div>` : ''}
         ${rank ? `<div class="rank-badge ${isTop3 ? 'top-3' : ''}">#${rank}</div>` : ''}
+        ${episodeTag}
         
         <div class="trending-overlay">
           ${item.vote_average ? `<div class="card-rating">★ ${item.vote_average.toFixed(1)}</div>` : ''}
@@ -146,8 +174,8 @@ function renderCardHTML(item, type, options = {}) {
       </div>
       <div class="card-footer">
         <div class="card-meta">
-          <span class="card-title">${item.title || item.name}</span>
-          <span class="card-year">${item.release_date || item.first_air_date ? new Date(item.release_date || item.first_air_date).getFullYear() : 'N/A'}</span>
+          <span class="card-title">${title}</span>
+          <span class="card-year">${item.isEpisode ? formatDate(item.date) : year}</span>
         </div>
       </div>
     </div>
@@ -167,7 +195,8 @@ function renderUpcoming(movies, tv) {
     })),
     ...(tv || []).map(s => ({ 
       ...s, media_type: 'tv', date: s.airDate,
-      poster: s.images?.find(i => i.coverType === 'poster')?.remoteUrl
+      isEpisode: true,
+      poster: s.series?.images?.find(i => i.coverType === 'poster')?.remoteUrl || s.images?.find(i => i.coverType === 'poster')?.remoteUrl
     })),
   ].filter(item => item.poster)
    .sort((a, b) => new Date(a.date) - new Date(b.date))

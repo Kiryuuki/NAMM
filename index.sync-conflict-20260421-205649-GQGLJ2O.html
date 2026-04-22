@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARR COCKPIT — Your media stack, jacked in.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <nav id="navbar"></nav>
+
+      <!-- Hero Section: Month Calendar -->
+      <section id="hero-calendar" class="calendar-hero"></section>
+
+      <div class="main-layout container">
+        <!-- Collapsible Sidebar -->
+        <aside id="sidebar" class="sidebar collapsed">
+          <button id="sidebar-toggle" class="sidebar-toggle-btn"><span>>></span></button>
+          <div id="sidebar-content"></div>
+        </aside>
+
+        <main class="content-area">
+          <!-- Summary Cards Row -->
+          <section id="service-cards" class="summary-grid"></section>
+
+          <!-- Main Dashboard Area -->
+          <section class="dashboard-area">
+            <div id="tabs" class="tabs-container">
+              <button class="tab-btn active" data-tab="queue">> QUEUE_</button>
+              <button class="tab-btn" data-tab="sessions">> SESSIONS_</button>
+              <button class="tab-btn" data-tab="indexers">> INDEXERS_</button>
+            </div>
+            
+            <div id="tab-content" class="tab-panel">
+              <!-- Dynamic Panel Component will mount here -->
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer"></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

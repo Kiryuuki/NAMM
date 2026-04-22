@@ -857,6 +857,21 @@
   color: var(--cp-cyan);
 }
 
+.episode-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--cp-cyan);
+  color: var(--deep-black);
+  padding: 2px 6px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 5;
+  border: 1px solid var(--deep-black);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
 .player-error-overlay {
   position: absolute;
   inset: 0;

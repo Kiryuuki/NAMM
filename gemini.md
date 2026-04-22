@@ -995,6 +995,8 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - Fixed `toUpperCase` retrieval error via metadata safety checks in `JellyfinView.js`.
 - Resolved Jellyfin API 400 error by robustifying endpoints to handle missing `USER_ID`.
 - Restructured Details Modal into a dual-pane layout: fixed identity info (left) and scrollable secondary content/episodes (right).
+- Enhanced Upcoming Releases with specific TV episode tags (SxxExx) and date formatting.
+- Expanded Discovery with dedicated **Trending Anime** and **K-Drama/K-Movies** sections.
 - Implemented `outside-click` to close for both Details Modal and Video Player.
 - Folder + spec v1 created by Minis
 - Spec v2 updated by Minis: added universal search + classifier, right sidebar layout (queue + stats), calendar main panel, full DESIGN.md spec (Cyberpunk 2077 theme), enterprise layout architecture, TMDB integration, Radarr/Sonarr add endpoints
