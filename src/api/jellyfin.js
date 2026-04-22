@@ -55,8 +55,22 @@ export async function refreshLibraries() {
   }
 }
 
-export function getStreamUrl(itemId) {
-  return `${BASE_URL}/Videos/${itemId}/stream?static=true&api_key=${API_KEY}`;
+export function getStreamUrl(itemId, options = {}) {
+  const mediaSourceId = options.mediaSourceId || itemId;
+  let url = `${BASE_URL}/Videos/${itemId}/stream?static=true&api_key=${API_KEY}`;
+  if (options.audioIndex !== undefined) url += `&AudioStreamIndex=${options.audioIndex}`;
+  if (options.subtitleIndex !== undefined) url += `&SubtitleStreamIndex=${options.subtitleIndex}`;
+  if (options.mediaSourceId) url += `&MediaSourceId=${options.mediaSourceId}`;
+  return url;
+}
+
+export async function getPlaybackInfo(itemId) {
+  return await apiFetch(`/Items/${itemId}/PlaybackInfo?UserId=${USER_ID || ''}`);
+}
+
+export function getSubtitleUrl(itemId, index, mediaSourceId) {
+  const msId = mediaSourceId || itemId;
+  return `${BASE_URL}/Videos/${itemId}/${index}/Subtitles/Stream.vtt?api_key=${API_KEY}&MediaSourceId=${msId}&copyTimestamps=true`;
 }
 
 export async function getItem(itemId) {
