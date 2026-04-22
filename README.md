@@ -14,20 +14,18 @@
 - **Universal Search**: Jack into TMDB and your local libraries simultaneously.
 - **Smart Classifier**: Automatic routing for new content (Movies → Radarr, TV → Sonarr).
 - **Premium Discovery**: Interactive trending and upcoming feeds with IMDB deep-linking and one-click management.
+- **Expanded Genres**: Dedicated feeds for **Trending Anime** and **K-DRAMA & K-MOVIES**.
 
 ![Search & Interaction](screenshots/search_results.png)
 *Universal Search & Real-time Lookup*
 
-### 📼 Native-Feel Management
+### 📼 Media Engine v1.2
+- **Advanced Playback**: Integrated media player with support for dynamic **Audio** and **Subtitle** track switching.
 - **Jellyfin Integration**: Native-looking media grid with drill-down views for all your libraries.
 - **Library Tracker**: Monitor the status of your entire collection with real-time health indicators.
-- **Action-First Workflow**: Rapidly add (`+`) or mark as seen (`×`) content directly from the discovery feed.
 
-![Library & Jellyfin](screenshots/library.png)
-*Radarr Library View*
-
-![Interaction](screenshots/card_hover.png)
-*Interactive Hover Overlays*
+![Player Controls](screenshots/player_controls.png)
+*Integrated Player with Track Selectors*
 
 ### 🖥️ Command Center Interface
 - **High-Density Sidebar**: Merged download queue (Radarr + Sonarr) and real-time system metrics.
@@ -48,59 +46,50 @@
 
 ## 🚀 Installation & Deployment
 
-NAMM is designed to be lightweight and portable. You can deploy it via Docker, self-host it on a VPS, or run it locally for development.
+NAMM is designed to be lightweight and portable. The recommended way to deploy is using Docker Compose.
 
 ### 1. Configure Environment
 Before deploying, create your `.env` file by copying the template:
 ```bash
 cp .env.example .env
 ```
-Fill in your service details. **Important:** URLs must be accessible from your browser (e.g., use your local IP `192.168.x.x` if running locally).
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_JELLYFIN_URL` | Your Jellyfin server URL |
-| `VITE_RADARR_URL` | Your Radarr instance URL |
-| `VITE_SONARR_URL` | Your Sonarr instance URL |
-| `VITE_TMDB_KEY` | TMDB API Key for discovery metadata |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_JELLYFIN_URL` | YES | Your Jellyfin server URL |
+| `VITE_JELLYFIN_KEY` | YES | Jellyfin API Key |
+| `VITE_JELLYFIN_USER_ID` | YES | Your Jellyfin User ID |
+| `VITE_RADARR_URL` | YES | Your Radarr instance URL |
+| `VITE_RADARR_KEY` | YES | Radarr API Key |
+| `VITE_SONARR_URL` | YES | Your Sonarr instance URL |
+| `VITE_SONARR_KEY` | YES | Sonarr API Key |
+| `VITE_TMDB_KEY` | YES | TMDB API Key for discovery metadata |
 
----
-
-### 2. Deployment Options
-
-#### Option A: Docker Compose (Recommended)
-This is the easiest way to get NAMM up and running in a production-ready Nginx container.
+### 2. Docker Deployment
 ```bash
-# Start the container
-docker compose up -d
+# Build and start the container in detached mode
+docker compose up -d --build
 ```
 Your dashboard will be available at `http://localhost:3500`.
 
-#### Option B: Self-Hosting (Dokploy)
-If you are using **Dokploy** for your infrastructure:
-1. Create a new "Docker Compose" application in your Dokploy dashboard.
-2. Link your GitHub repository.
-3. Add your `.env` variables in the Dokploy environment settings.
-4. Deploy. Dokploy will automatically handle the build and serve NAMM on your configured domain.
-
-#### Option C: Local Development
-To run NAMM locally with hot-reloading:
+### 3. Local Development
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 The app will be live at `http://localhost:5173`.
 
 ---
 
-### 3. PWA Installation
-NAMM is a Progressive Web App. Once deployed:
-1. Open the URL in Chrome or Edge.
-2. Click the **"Install"** icon in the address bar (or "Add to Home Screen" on mobile).
-3. NAMM will now behave like a native desktop/mobile application with its own window and offline shell.
+## 🏷️ Versioning
+
+NAMM follows semantic versioning (`MAJOR.MINOR.PATCH`).
+
+- **MAJOR**: Breaking architectural changes or complete UI overhauls.
+- **MINOR**: New features (e.g., adding a new service, expanded discovery filters, player upgrades).
+- **PATCH**: Bug fixes, styling tweaks, and performance optimizations.
+
+Current Version: **v1.2.5-CP** (Cyberpunk Edition)
 
 ---
 
