@@ -84,3 +84,9 @@ export async function addMovie(tmdbResult) {
     return { error: true, message: error.message };
   }
 }
+
+export async function deleteMovie(movieId, deleteFiles = true) {
+  return await apiFetch(`/api/v3/movie/${movieId}?deleteFiles=${deleteFiles}`, {
+    method: 'DELETE'
+  });
+}

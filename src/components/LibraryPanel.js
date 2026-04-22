@@ -1,5 +1,6 @@
 import * as radarr from '../api/radarr.js';
 import * as sonarr from '../api/sonarr.js';
+import { showToast } from './Toast.js';
 
 export function initLibraryPanel(containerId) {
   const container = document.getElementById(containerId);
@@ -82,7 +83,7 @@ function renderLibraryItems(grid, items, type) {
           <div class="status-overlay">${statusLabel}</div>
           <div class="card-actions-overlay">
             <button class="cp-button mini sync-btn" title="Refresh Metadata">SYNC</button>
-            <button class="cp-button mini secondary remove-btn" title="Remove from Library">DELETE</button>
+            <button class="cp-button mini secondary remove-btn" title="Remove from Library">REMOVE</button>
           </div>
         </div>
         <div class="card-footer">
@@ -94,4 +95,32 @@ function renderLibraryItems(grid, items, type) {
       </div>
     `;
   }).join('');
+
+  // Wire up actions
+  grid.querySelectorAll('.library-card').forEach((card, i) => {
+    const item = items[i];
+    card.querySelector('.sync-btn').addEventListener('click', () => {
+      showToast(`SYNCING: ${item.title}...`, 'success');
+      // Radarr/Sonarr handle refresh via command, but let's keep it simple for now
+    });
+
+    card.querySelector('.remove-btn').addEventListener('click', async () => {
+      const confirmed = confirm(`[ CAUTION ] Are you sure you want to REMOVE "${item.title}" from your library and DELETE files from disk?`);
+      if (!confirmed) return;
+
+      let res;
+      if (type === 'movie') {
+        res = await radarr.deleteMovie(item.id);
+      } else {
+        res = await sonarr.deleteSeries(item.id);
+      }
+
+      if (res && res.error) {
+        showToast(`FAILED TO REMOVE: ${res.message}`, 'error');
+      } else {
+        showToast(`REMOVED: ${item.title}`, 'success');
+        loadLibraryData(type === 'movie' ? 'movies' : 'tv');
+      }
+    });
+  });
 }

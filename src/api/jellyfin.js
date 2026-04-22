@@ -38,7 +38,9 @@ export async function searchItems(query) {
 }
 
 export async function getLibraryItems(parentId) {
-  return await apiFetch(`/Items?ParentId=${parentId}&Limit=60&SortBy=SortName&Fields=PrimaryImageAspectRatio,BasicSyncInfo`);
+  let url = `/Items?ParentId=${parentId}&Limit=60&SortBy=SortName&Fields=PrimaryImageAspectRatio,BasicSyncInfo,ProductionYear`;
+  if (USER_ID) url += `&UserId=${USER_ID}`;
+  return await apiFetch(url);
 }
 
 export async function refreshLibraries() {
@@ -51,4 +53,36 @@ export async function refreshLibraries() {
   } catch (error) {
     return { error: true, message: error.message };
   }
+}
+
+export function getStreamUrl(itemId) {
+  return `${BASE_URL}/Videos/${itemId}/stream?static=true&api_key=${API_KEY}`;
+}
+
+export async function getItem(itemId) {
+  // Use /Items/{Id} instead of user-specific path to be more robust
+  let url = `/Items/${itemId}?Fields=Overview,Genres,CommunityRating,RunTimeTicks,ProductionYear`;
+  if (USER_ID) url += `&UserId=${USER_ID}`;
+  return await apiFetch(url);
+}
+
+export async function getItems(params = '') {
+  let url = `/Items?${params}`;
+  if (USER_ID && !params.includes('UserId')) {
+    url += `&UserId=${USER_ID}`;
+  }
+  return await apiFetch(url);
+}
+
+export async function getEpisodes(seriesId, seasonId = null) {
+  let url = `/Shows/${seriesId}/Episodes?Fields=Overview,PrimaryImageAspectRatio`;
+  if (USER_ID) url += `&UserId=${USER_ID}`;
+  if (seasonId) url += `&SeasonId=${seasonId}`;
+  return await apiFetch(url);
+}
+
+export async function getSeasons(seriesId) {
+  let url = `/Shows/${seriesId}/Seasons?`;
+  if (USER_ID) url += `&UserId=${USER_ID}`;
+  return await apiFetch(url);
 }

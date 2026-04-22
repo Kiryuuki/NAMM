@@ -83,3 +83,9 @@ export async function addSeries(tmdbResult) {
     return { error: true, message: error.message };
   }
 }
+
+export async function deleteSeries(seriesId, deleteFiles = true) {
+  return await apiFetch(`/api/v3/series/${seriesId}?deleteFiles=${deleteFiles}`, {
+    method: 'DELETE'
+  });
+}

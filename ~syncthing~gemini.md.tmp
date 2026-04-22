@@ -908,26 +908,8 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - [x] Stabilize card reflow with smooth transitions on `.poster-grid` and card elements
 - [x] Optimize responsive sidebar overlay for mobile devices
 - [x] `Dockerfile`, `nginx.conf`, `docker-compose.yml`
-- [x] `docker compose build && docker compose up -d` — verify at `http://localhost:3500`
-- [x] Deploy via Dokploy
-
-### Phase 19 — Media Management & Playback
-- [x] **Versioning**: Add `v1.2.5-CP` (Cyberpunk Edition) to sidebar bottom.
-- [x] **Library Removal**:
-    - [x] Add `deleteMovie` (Radarr) and `deleteSeries` (Sonarr) to API clients.
-    - [x] Add `REMOVE` button to `LibraryPanel.js` card hover overlay.
-    - [x] Implement a confirmation toast/modal before deletion.
-- [x] **Jellyfin Playback**:
-    - [x] Add `PLAY` button to `JellyfinView.js` items.
-    - [x] Implement `PlayerOverlay.js` using native `<video>` tag.
-    - [x] Stream via Jellyfin `/Videos/{Id}/stream` with direct auth token.
-    - [x] Custom cyberpunk player controls (neon progress bar, pixel buttons).
-
-### Phase 20 — Jellyfin UX Overhaul
-- [x] **Card Cleanup**: Removed redundant hover overlays from Jellyfin cards.
-- [x] **Details Modal**: Implement rich metadata modal (poster, summary, community rating, genres).
-- [x] **Series Intelligence**: Support hierarchical episode listing for TV shows within the modal.
-- [x] **Player Stability**: Fixed playback issues by optimizing stream URLs and adding error/buffering feedback.
+- [ ] `docker compose build && docker compose up -d` — verify at `http://localhost:3500`
+- [ ] Deploy via Dokploy
 
 ---
 
@@ -979,23 +961,7 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - Created README.md and initialized Git repository (fixed .gitignore).
 - Production build verified with `npm run build`.
 - Final DONE.md completion report generated in project root.
-### 2026-04-22
-- **Phase 19 completed**: NAMM Media Engine v1.2 launched.
-- Added app versioning `v1.2.5-CP` to sidebar footer.
-- Implemented `deleteMovie` and `deleteSeries` with disk cleanup in Radarr/Sonarr clients.
-- Added `REMOVE` button to Library cards with destructive confirmation logic.
-- Launched integrated `PlayerOverlay.js` for native Jellyfin streaming via HTML5 video.
-- Verified live at localhost:5173 — media playback active, library cleanup functional.
-### 2026-04-22 (Later)
-- **Phase 20 completed**: Jellyfin UX Overhaul.
-- Removed redundant card overlays; enabled direct-to-modal card interaction.
-- Implemented `showItemDetails` with movie/series intelligence.
-- Added episode browsing for TV shows within the dashboard.
-- Stabilized `PlayerOverlay.js` with `static=true` streaming and signal status feedback (BUFFERING/LIVE/ERROR).
-- Fixed `toUpperCase` retrieval error via metadata safety checks in `JellyfinView.js`.
-- Resolved Jellyfin API 400 error by robustifying endpoints to handle missing `USER_ID`.
-- Restructured Details Modal into a dual-pane layout: fixed identity info (left) and scrollable secondary content/episodes (right).
-- Implemented `outside-click` to close for both Details Modal and Video Player.
+- Verified live at localhost:5173 — real API data, all effects active
 - Folder + spec v1 created by Minis
 - Spec v2 updated by Minis: added universal search + classifier, right sidebar layout (queue + stats), calendar main panel, full DESIGN.md spec (Cyberpunk 2077 theme), enterprise layout architecture, TMDB integration, Radarr/Sonarr add endpoints
 

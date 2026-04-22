@@ -48,3 +48,14 @@ export async function getTrendingMovies() {
 export async function getTrendingTV() {
   return await tmdbFetch('/trending/tv/week');
 }
+
+/** Specialized discovery for Anime (Genre 16, Language ja) */
+export async function getDiscoverAnime() {
+  return await tmdbFetch('/discover/tv?with_genres=16&with_original_language=ja&sort_by=popularity.desc&vote_count.gte=50');
+}
+
+/** Specialized discovery for Korean content (Language ko) */
+export async function getDiscoverKorean() {
+  // Combine popular K-Dramas
+  return await tmdbFetch('/discover/tv?with_original_language=ko&sort_by=popularity.desc&vote_count.gte=50');
+}
