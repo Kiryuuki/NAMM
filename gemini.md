@@ -998,6 +998,7 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - Enhanced Upcoming Releases with specific TV episode tags (SxxExx) and date formatting.
 - Expanded Discovery with dedicated **Trending Anime** and **K-Drama/K-Movies** sections.
 - Integrated **Advanced Streaming Controls**: Corrected subtitle identification (SRT/SUBRIP whitelist), dynamic metadata mapping (Language/Label), and hardened 'showing' mode activation.
+- **Security Audit**: Performed full codebase sweep; verified zero hardcoded IPs/keys in `src`, confirmed `.env` exclusion in `.gitignore`, and validated documentation safety.
 - Implemented `outside-click` to close for both Details Modal and Video Player.
 - Folder + spec v1 created by Minis
 - Spec v2 updated by Minis: added universal search + classifier, right sidebar layout (queue + stats), calendar main panel, full DESIGN.md spec (Cyberpunk 2077 theme), enterprise layout architecture, TMDB integration, Radarr/Sonarr add endpoints
