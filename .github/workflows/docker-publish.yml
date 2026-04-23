@@ -2,7 +2,7 @@ name: Docker Build and Publish
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 env:
@@ -54,6 +54,6 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Dokploy Redeploy
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
           curl -X POST "${{ secrets.DOKPLOY_WEBHOOK }}"
