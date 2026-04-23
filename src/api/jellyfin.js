@@ -1,6 +1,6 @@
 import { config } from './config.js';
 
-const BASE_URL = config.JELLYFIN_URL;
+const BASE_URL = config.JELLYFIN_URL ? config.JELLYFIN_URL.replace(/\/$/, '') : '';
 const API_KEY = config.JELLYFIN_KEY;
 const USER_ID = config.JELLYFIN_USER_ID;
 
@@ -10,11 +10,24 @@ const headers = {
 };
 
 async function apiFetch(endpoint, options = {}) {
+  if (!BASE_URL) {
+    console.error(`[JELLYFIN] Config Error: JELLYFIN_URL is missing.`);
+    return { error: true, message: "Jellyfin URL not configured" };
+  }
+
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const url = `${BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
       ...options,
       headers: { ...headers, ...options.headers }
     });
+    
+    // Check if we got HTML instead of JSON (common when hitting Nginx fallbacks)
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("text/html")) {
+       throw new Error(`Expected JSON but received HTML. Check if JELLYFIN_URL is correct: ${BASE_URL}`);
+    }
+
     if (!response.ok) throw new Error(`Jellyfin API error: ${response.status}`);
     return await response.json();
   } catch (error) {

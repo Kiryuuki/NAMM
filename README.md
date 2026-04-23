@@ -20,8 +20,8 @@
 *Universal Search & Real-time Lookup*
 
 ### 📼 Media Engine v1.2
+- **Jellyfin Detail Views**: High-fidelity item details with hero backdrops, technical specs, and series navigation.
 - **Advanced Playback**: Integrated media player with support for dynamic **Audio** and **Subtitle** track switching.
-- **Jellyfin Integration**: Native-looking media grid with drill-down views for all your libraries.
 - **Library Tracker**: Monitor the status of your entire collection with real-time health indicators.
 
 ![Player Controls](screenshots/player_controls.png)
@@ -41,43 +41,50 @@
 - **Styling**: Vanilla CSS (Cyberpunk Design System)
 - **PWA**: Workbox / `vite-plugin-pwa`
 - **Infrastructure**: Docker / Nginx Alpine
+- **Deployment**: GitHub Actions CI/CD to GHCR
 
 ---
 
 ## 🚀 Installation & Deployment
 
-NAMM is designed to be lightweight and portable. The recommended way to deploy is using Docker Compose.
+NAMM is designed to be lightweight and portable. The recommended way to deploy is using the pre-built image.
 
-### 1. Configure Environment
-Before deploying, create your `.env` file by copying the template:
-```bash
-cp .env.example .env
+### 1. Simple Deployment (Docker Compose)
+Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  namm:
+    image: ghcr.io/kiryuuki/namm:latest
+    container_name: namm
+    ports:
+      - "3500:80"
+    restart: unless-stopped
+    environment:
+      - VITE_JELLYFIN_URL=http://your-ip:8096
+      - VITE_JELLYFIN_KEY=your_key
+      - VITE_JELLYFIN_USER_ID=your_id
+      - VITE_RADARR_URL=http://your-ip:7878
+      - VITE_RADARR_KEY=your_key
+      - VITE_SONARR_URL=http://your-ip:8989
+      - VITE_SONARR_KEY=your_key
+      - VITE_PROWLARR_URL=http://your-ip:9696
+      - VITE_PROWLARR_KEY=your_key
+      - VITE_TMDB_KEY=your_tmdb_key
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `VITE_JELLYFIN_URL` | YES | Your Jellyfin server URL |
-| `VITE_JELLYFIN_KEY` | YES | Jellyfin API Key |
-| `VITE_JELLYFIN_USER_ID` | YES | Your Jellyfin User ID |
-| `VITE_RADARR_URL` | YES | Your Radarr instance URL |
-| `VITE_RADARR_KEY` | YES | Radarr API Key |
-| `VITE_SONARR_URL` | YES | Your Sonarr instance URL |
-| `VITE_SONARR_KEY` | YES | Sonarr API Key |
-| `VITE_TMDB_KEY` | YES | TMDB API Key for discovery metadata |
-
-### 2. Docker Deployment
+Run it:
 ```bash
-# Build and start the container in detached mode
-docker compose up -d --build
+docker compose up -d
 ```
-Your dashboard will be available at `http://localhost:3500`.
 
-### 3. Local Development
-```bash
-npm install
-npm run dev
-```
-The app will be live at `http://localhost:5173`.
+### 2. Dokploy / Cloud Deployment
+NAMM supports **Runtime Injection**. You can update your environment variables directly in the Dokploy/Portainer UI without re-building the image.
+
+**Continuous Deployment**:
+1. Enable **Autodeploy** in Dokploy.
+2. Add your Dokploy Webhook URL as a GitHub Secret named `DOKPLOY_WEBHOOK`.
+3. Every push to your `main` branch will automatically update your server.
 
 ---
 
@@ -89,7 +96,7 @@ NAMM follows semantic versioning (`MAJOR.MINOR.PATCH`).
 - **MINOR**: New features (e.g., adding a new service, expanded discovery filters, player upgrades).
 - **PATCH**: Bug fixes, styling tweaks, and performance optimizations.
 
-Current Version: **v1.2.5-CP** (Cyberpunk Edition)
+Current Version: **v1.2.6-CP** (Cyberpunk Edition)
 
 ---
 

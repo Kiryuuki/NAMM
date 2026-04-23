@@ -57,7 +57,8 @@ skill_ref: https://mcpmarket.com/tools/skills/retro-pixel-ui-design
 | PWA | vite-plugin-pwa (Workbox) |
 | Container | nginx:alpine serving `/dist` |
 | Orchestration | docker compose v2 |
-| Config | `.env` → `import.meta.env.VITE_*` |
+| Orchestration | docker compose v2 |
+| Config | Runtime Injection via `config.js` + `entrypoint.sh` |
 
 ---
 
@@ -910,6 +911,14 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - [x] `Dockerfile`, `nginx.conf`, `docker-compose.yml`
 - [x] `docker compose build && docker compose up -d` — verify at `http://localhost:3500`
 - [x] Deploy via Dokploy
+- [x] **Runtime Injection**: Moved from build-time environment variables to runtime injection using `entrypoint.sh` and `config.js`.
+
+### Phase 21 — CI/CD & Auto-Deployment
+- [x] **Docker Optimization**: Fixed `.dockerignore` to include `nginx.conf` and `entrypoint.sh`.
+- [x] **GitHub Actions**: Created `.github/workflows/docker-publish.yml` to build and push images to **GHCR**.
+- [x] **Buildx Cache**: Configured `docker/setup-buildx-action` to fix GHA cache errors.
+- [x] **Auto-Deploy**: Integrated Dokploy webhook trigger into the GitHub Action for automated redeploy on push.
+- [x] **Node 24 Upgrade**: Opted into Node 24 for GitHub Actions to ensure long-term runner compatibility.
 
 ### Phase 19 — Media Management & Playback
 - [x] **Versioning**: Add `v1.2.5-CP` (Cyberpunk Edition) to sidebar bottom.
@@ -1002,6 +1011,12 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - Implemented `outside-click` to close for both Details Modal and Video Player.
 - Folder + spec v1 created by Minis
 - Spec v2 updated by Minis: added universal search + classifier, right sidebar layout (queue + stats), calendar main panel, full DESIGN.md spec (Cyberpunk 2077 theme), enterprise layout architecture, TMDB integration, Radarr/Sonarr add endpoints
+### 2026-04-23
+- **Phase 21 completed**: NAMM is now fully portable.
+- Implemented **Runtime Injection** architecture. The app now loads `/config.js` at runtime, allowing users to update API keys and URLs via Dokploy UI without re-building.
+- Automated **CI/CD Pipeline** launched: Every push to `main` builds a multi-arch image, pushes to GHCR, and triggers a Dokploy redeploy via webhook.
+- Fixed Buildx cache errors and updated GitHub Actions to Node 24.
+- Security verified: Zero secrets leaked in builds; all injection happens at the container edge.
 
 ## Links
 

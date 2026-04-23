@@ -52,3 +52,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Trigger Dokploy Redeploy
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl -X POST "${{ secrets.DOKPLOY_WEBHOOK }}"

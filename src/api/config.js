@@ -28,3 +28,8 @@ export const config = {
   
   TMDB_KEY: getEnv('VITE_TMDB_KEY'),
 };
+
+// Validation for runtime debugging
+Object.entries(config).forEach(([key, value]) => {
+  if (!value) console.warn(`[CONFIG] Key "${key}" is currently undefined or empty. Check environment variables.`);
+});
