@@ -74,8 +74,8 @@ export function getSubtitleUrl(itemId, index, mediaSourceId) {
 }
 
 export async function getItem(itemId) {
-  // Use /Items/{Id} instead of user-specific path to be more robust
-  let url = `/Items/${itemId}?Fields=Overview,Genres,CommunityRating,RunTimeTicks,ProductionYear`;
+  // Enhanced fields for Jellyfin-style layout
+  let url = `/Items/${itemId}?Fields=Overview,Genres,CommunityRating,RunTimeTicks,ProductionYear,People,Studios,Taglines,Tags,MediaSources,OfficialRating,MediaStreams`;
   if (USER_ID) url += `&UserId=${USER_ID}`;
   return await apiFetch(url);
 }
