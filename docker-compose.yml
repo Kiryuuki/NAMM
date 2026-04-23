@@ -1,14 +1,22 @@
 services:
   namm:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/kiryuuki/namm:latest
     container_name: namm
     ports:
       - "3500:80"
     restart: unless-stopped
-    env_file:
-      - .env
+    environment:
+      # These will be pulled from your Dokploy Environment UI
+      - VITE_JELLYFIN_URL=${VITE_JELLYFIN_URL}
+      - VITE_JELLYFIN_KEY=${VITE_JELLYFIN_KEY}
+      - VITE_JELLYFIN_USER_ID=${VITE_JELLYFIN_USER_ID}
+      - VITE_RADARR_URL=${VITE_RADARR_URL}
+      - VITE_RADARR_KEY=${VITE_RADARR_KEY}
+      - VITE_SONARR_URL=${VITE_SONARR_URL}
+      - VITE_SONARR_KEY=${VITE_SONARR_KEY}
+      - VITE_PROWLARR_URL=${VITE_PROWLARR_URL}
+      - VITE_PROWLARR_KEY=${VITE_PROWLARR_KEY}
+      - VITE_TMDB_KEY=${VITE_TMDB_KEY}
 
 networks:
   default:

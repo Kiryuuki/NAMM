@@ -1,0 +1,51 @@
+name: Docker Build and Publish
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { REGISTRY } = process.env;
+            const token = '${{ secrets.GITHUB_TOKEN }}';
+            const actor = '${{ github.actor }}';
+            // Simple login via shell
+            core.info(`Logging in to ${REGISTRY}...`);
+            require('child_process').execSync(`echo ${token} | docker login ${REGISTRY} -u ${actor} --password-stdin`);
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=true
+            type=sha,format=short
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
