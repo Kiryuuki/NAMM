@@ -1,8 +1,9 @@
 import * as jellyfin from '../api/jellyfin.js';
 import { openPlayer } from './PlayerOverlay.js';
+import { config } from '../api/config.js';
 
-const JELLYFIN_URL = import.meta.env.VITE_JELLYFIN_URL;
-const JELLYFIN_KEY = import.meta.env.VITE_JELLYFIN_KEY;
+const JELLYFIN_URL = config.JELLYFIN_URL;
+const JELLYFIN_KEY = config.JELLYFIN_KEY;
 
 export async function showItemDetails(itemId, isJellyfin = true) {
   const modalContainer = document.getElementById('modal-container');

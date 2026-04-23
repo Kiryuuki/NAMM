@@ -1,5 +1,7 @@
-const BASE_URL = import.meta.env.VITE_PROWLARR_URL;
-const API_KEY = import.meta.env.VITE_PROWLARR_KEY;
+import { config } from './config.js';
+
+const BASE_URL = config.PROWLARR_URL;
+const API_KEY = config.PROWLARR_KEY;
 
 const headers = {
   'Accept': 'application/json',

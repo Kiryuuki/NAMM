@@ -1,5 +1,7 @@
-const BASE_URL = import.meta.env.VITE_SONARR_URL;
-const API_KEY = import.meta.env.VITE_SONARR_KEY;
+import { config } from './config.js';
+
+const BASE_URL = config.SONARR_URL;
+const API_KEY = config.SONARR_KEY;
 
 const headers = {
   'Accept': 'application/json',

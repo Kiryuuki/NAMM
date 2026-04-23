@@ -1,5 +1,7 @@
-const BASE_URL = import.meta.env.VITE_RADARR_URL;
-const API_KEY = import.meta.env.VITE_RADARR_KEY;
+import { config } from './config.js';
+
+const BASE_URL = config.RADARR_URL;
+const API_KEY = config.RADARR_KEY;
 
 const headers = {
   'Accept': 'application/json',

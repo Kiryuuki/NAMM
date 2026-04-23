@@ -1,7 +1,8 @@
 import * as radarr from './radarr.js';
 import * as sonarr from './sonarr.js';
+import { config } from './config.js';
 
-const TMDB_KEY = import.meta.env.VITE_TMDB_KEY;
+const TMDB_KEY = config.TMDB_KEY;
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 async function tmdbFetch(endpoint) {

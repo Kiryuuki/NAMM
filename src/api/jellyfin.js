@@ -1,6 +1,8 @@
-const BASE_URL = import.meta.env.VITE_JELLYFIN_URL;
-const API_KEY = import.meta.env.VITE_JELLYFIN_KEY;
-const USER_ID = import.meta.env.VITE_JELLYFIN_USER_ID;
+import { config } from './config.js';
+
+const BASE_URL = config.JELLYFIN_URL;
+const API_KEY = config.JELLYFIN_KEY;
+const USER_ID = config.JELLYFIN_USER_ID;
 
 const headers = {
   'Accept': 'application/json',
