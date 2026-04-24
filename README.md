@@ -81,11 +81,6 @@ docker compose up -d
 ### 2. Dokploy / Cloud Deployment
 NAMM supports **Runtime Injection**. You can update your environment variables directly in the Dokploy/Portainer UI without re-building the image.
 
-**Continuous Deployment**:
-1. Enable **Autodeploy** in Dokploy.
-2. Add your Dokploy Webhook URL as a GitHub Secret named `DOKPLOY_WEBHOOK`.
-3. Every push to your `main` branch will automatically update your server.
-
 ---
 
 ## 🏷️ Versioning
