@@ -5,7 +5,7 @@ import * as prowlarr from './api/prowlarr.js';
 import { initNavbar, updateNavbarHealth } from './components/Navbar.js';
 import { initSidebarNav, setSidebarActiveTab } from './components/SidebarNav.js';
 import { initDownloadQueue } from './components/DownloadQueue.js';
-import { initStatsPanel } from './components/StatsPanel.js';
+import { initStatsPanel, updateStatsPanelHealth } from './components/StatsPanel.js';
 import { initDiscoveryPanel } from './components/DiscoveryPanel.js';
 import { initLibraryPanel } from './components/LibraryPanel.js';
 import { initJellyfinView } from './components/JellyfinView.js';
@@ -31,12 +31,15 @@ async function checkHealth() {
     sonarr.getSystemStatus(),
     prowlarr.getSystemStatus(),
   ]);
-  updateNavbarHealth({
+  const statuses = {
     jellyfin: jf.status === 'fulfilled' && !jf.value?.error,
     radarr:   rd.status === 'fulfilled' && !rd.value?.error,
     sonarr:   sn.status === 'fulfilled' && !sn.value?.error,
     prowlarr: pr.status === 'fulfilled' && !pr.value?.error,
-  });
+  };
+  window.NAMM_STATUSES = statuses; // Global store for persistence
+  updateNavbarHealth(statuses);
+  updateStatsPanelHealth(statuses);
 }
 
 /** Re-init text/counter effects after any panel re-render */
@@ -60,8 +63,6 @@ function switchTab(tab) {
 
   // Aurora only on discovery (main panel has content-heavy bg)
   if (tab === 'discovery') initAurora();
-
-  refreshEffects();
 
   refreshEffects();
 }

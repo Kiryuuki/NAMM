@@ -261,6 +261,8 @@
    ═══════════════════════════════ */
 #main-panel {
   position: relative;
+  padding-top: 40px !important; /* Clearance for hover pop-up */
+  overflow-y: auto !important;
 }
 
 .aurora-bg {
@@ -532,6 +534,12 @@
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: visible !important; /* Allow hover translateY to pop up */
+  padding: 12px 16px 20px 16px; /* Room for translateY, box-shadow on all sides */
+  margin-top: -12px;
+  margin-left: -16px;
+  margin-right: -16px;
 }
 
 /* ── Unified Card System ── */
@@ -1171,7 +1179,6 @@
   content: '';
 }
 
-/* Seasons / Episodes Section */
 .seasons-section {
   margin-top: var(--space-32);
 }

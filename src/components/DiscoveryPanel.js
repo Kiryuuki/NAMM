@@ -14,10 +14,6 @@ export function initDiscoveryPanel(containerId) {
 
       <section id="upcoming-section" class="discovery-section">
         <h2 class="label decrypt-text shiny-text" data-text="[ UPCOMING RELEASES ]">[ UPCOMING RELEASES ]</h2>
-        <div class="carousel-controls">
-          <button class="carousel-btn" id="upcoming-prev">&lt;</button>
-          <button class="carousel-btn" id="upcoming-next">&gt;</button>
-        </div>
         <div class="horizontal-scroll" id="upcoming-list">
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
@@ -25,7 +21,6 @@ export function initDiscoveryPanel(containerId) {
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
           <div class="skeleton" style="width:200px;height:300px;flex-shrink:0"></div>
         </div>
-        <div class="carousel-dots" id="upcoming-dots"></div>
       </section>
 
       <section id="trending-movies-section" class="discovery-section">
@@ -71,30 +66,7 @@ export function initDiscoveryPanel(containerId) {
     </div>
   `;
 
-  initCarouselControls();
   loadDiscoveryData();
-}
-
-/** Set up carousel scroll buttons + auto-advance */
-function initCarouselControls() {
-  const list = document.getElementById('upcoming-list');
-  if (!list) return;
-
-  const scroll = (amount) => list.scrollBy({ left: amount, behavior: 'smooth' });
-
-  document.getElementById('upcoming-prev')?.addEventListener('click', () => scroll(-500));
-  document.getElementById('upcoming-next')?.addEventListener('click', () => scroll(500));
-
-  // Auto-advance every 6s, pause on hover
-  let paused = false;
-  list.addEventListener('mouseenter', () => paused = true);
-  list.addEventListener('mouseleave', () => paused = false);
-
-  setInterval(() => {
-    if (paused) return;
-    const atEnd = list.scrollLeft + list.offsetWidth >= list.scrollWidth - 10;
-    list.scrollBy({ left: atEnd ? -list.scrollWidth : 300, behavior: 'smooth' });
-  }, 6000);
 }
 
 /** Fetch all discovery data in parallel, safely */
@@ -102,7 +74,6 @@ async function loadDiscoveryData() {
   const now = new Date().toISOString();
   const in30 = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Helper to run fetch safely
   const safeFetch = async (fn, fallback = []) => {
     try {
       const res = await fn;
@@ -129,7 +100,6 @@ async function loadDiscoveryData() {
     safeFetch(sonarr.getSeries()),
   ]);
 
-  // Extract IDs for filtering
   const radarrIds = new Set((radarrLib || []).map(m => m.tmdbId).filter(Boolean));
   const sonarrTitles = new Set((sonarrLib || []).map(s => (s.title || '').toLowerCase()).filter(Boolean));
 
@@ -150,25 +120,23 @@ function renderCardHTML(item, type, options = {}) {
   const desc = (item.overview || '').slice(0, 140);
   const typeLabel = item.media_type === 'movie' ? 'FILM' : 'TV';
   const typeClass = item.media_type === 'movie' ? 'movie' : 'tv';
-
+  const typeBadge = options.showTypeBadge ? `<div class="type-badge ${typeClass}">${typeLabel}</div>` : '';
   const episodeTag = item.isEpisode ? `<span class="episode-tag">S${item.seasonNumber}E${item.episodeNumber}</span>` : '';
 
   return `
-    <div class="upcoming-card ${options.className || ''}" data-id="${item.id}">
+    <div class="upcoming-card trending-card border-beam-auto ${options.className || ''}" data-beam-color="var(--cp-yellow)" data-id="${item.id}">
       <div class="poster-thumb" style="background-image: url('${poster}')">
-        ${showTypeBadge ? `<div class="type-badge ${typeClass}">${typeLabel}</div>` : ''}
-        ${rank ? `<div class="rank-badge ${isTop3 ? 'top-3' : ''}">#${rank}</div>` : ''}
+        ${typeBadge}
         ${episodeTag}
         
         <div class="trending-overlay">
-          ${item.vote_average ? `<div class="card-rating">★ ${item.vote_average.toFixed(1)}</div>` : ''}
           <div class="card-desc">${desc}${desc.length >= 140 ? '...' : ''}</div>
           <div class="overlay-actions">
-            ${item.id ? `<a href="https://www.themoviedb.org/${type}/${item.id}" target="_blank" class="cp-button mini imdb-link">DETAILS</a>` : ''}
-            <div class="card-btn-group" style="display:flex; gap:4px; width:100%">
-              <button class="cp-button mini add-btn" data-type="${type}" data-tmdb-id="${item.id}">+ ADD</button>
-              <button class="cp-button mini secondary seen-btn" title="Hide from Trending">×</button>
+            <div class="card-btn-group">
+              <button class="cp-button mini add-btn" data-type="${type}" data-tmdb-id="${item.id}">+</button>
+              <button class="cp-button mini secondary seen-btn" title="Mark as Seen">✕</button>
             </div>
+            ${item.id ? `<a href="https://www.themoviedb.org/${type}/${item.id}" target="_blank" class="cp-button mini imdb-link">DETAILS</a>` : ''}
           </div>
         </div>
       </div>
@@ -182,7 +150,7 @@ function renderCardHTML(item, type, options = {}) {
   `;
 }
 
-/** Render horizontal upcoming carousel */
+/** Render horizontal upcoming list */
 function renderUpcoming(movies, tv) {
   const list = document.getElementById('upcoming-list');
   if (!list) return;
@@ -227,32 +195,9 @@ function renderUpcoming(movies, tv) {
       card.style.pointerEvents = 'none';
     });
   });
-
-  // Dot indicators
-  renderDots(items.length);
-  list.addEventListener('scroll', () => updateDots(list));
 }
 
-/** Render dot indicators for carousel */
-function renderDots(count) {
-  const dotsEl = document.getElementById('upcoming-dots');
-  if (!dotsEl || count === 0) return;
-  const visible = Math.min(count, 10);
-  dotsEl.innerHTML = Array.from({ length: visible }, (_, i) =>
-    `<div class="carousel-dot${i === 0 ? ' active' : ''}"></div>`
-  ).join('');
-}
-
-/** Update active dot on scroll */
-function updateDots(list) {
-  const dots = document.querySelectorAll('.carousel-dot');
-  if (!dots.length) return;
-  const cardWidth = 216; // 200 + 16 gap
-  const idx = Math.min(Math.round(list.scrollLeft / cardWidth), dots.length - 1);
-  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-}
-
-/** Render trending grid with rank badges */
+/** Render trending grid */
 function renderTrending(containerId, results, type, libraryIds = new Set()) {
   const list = document.getElementById(containerId);
   if (!list) return;
@@ -265,10 +210,9 @@ function renderTrending(containerId, results, type, libraryIds = new Set()) {
       const isReleased = releaseDate <= today;
       const isSeen = seenIds.includes(r.id);
       
-      // Library check
       let isInLibrary = false;
       if (type === 'movie') {
-        isInLibrary = libraryIds.has(r.id); // TMDB ID
+        isInLibrary = libraryIds.has(r.id);
       } else {
         const title = (r.name || '').toLowerCase();
         isInLibrary = libraryIds.has(title);
@@ -334,5 +278,3 @@ async function handleAdd(result, type) {
     showToast(`QUEUED: ${result.title || result.name} → ${type === 'movie' ? 'RADARR' : 'SONARR'}`, 'success');
   }
 }
-
-

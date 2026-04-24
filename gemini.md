@@ -920,6 +920,13 @@ Port: `3500`. Cloudflare tunnel → `cockpit.kiryuuki.space` (confirm with Aldri
 - [x] **Auto-Deploy**: Integrated Dokploy webhook trigger into the GitHub Action for automated redeploy on push.
 - [x] **Node 24 Upgrade**: Opted into Node 24 for GitHub Actions to ensure long-term runner compatibility.
 
+### Phase 22 — UI/UX Refinement (Discovery & Stats)
+- [ ] **Discovery Hover**: Fix overflow/clipping of hover summary.
+- [ ] **Discovery Actions**: Standardize buttons to `[+]` `[✕]` `[DETAILS]` with pixel spacing.
+- [ ] **Branding**: Relocate `[ NAMM ]` to lower right; improve version visibility.
+- [ ] **Health Overhaul**: Replace "SYSTEM OPTIMAL" with real service health dots + glow.
+- [ ] **Sync Info**: Integrate "Last Sync" into the health/stats area.
+
 ### Phase 19 — Media Management & Playback
 - [x] **Versioning**: Add `v1.2.5-CP` (Cyberpunk Edition) to sidebar bottom.
 - [x] **Library Removal**:

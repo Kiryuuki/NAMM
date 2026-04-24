@@ -25,7 +25,8 @@ async function updateStats() {
   const grid = document.getElementById('stats-grid');
   if (!grid) return;
 
-  const safeFetch = async (fn, fallback = {}) => {
+  try {
+    const safeFetch = async (fn, fallback = {}) => {
     try {
       const res = await fn;
       return res && !res.error ? res : fallback;
@@ -66,9 +67,14 @@ async function updateStats() {
       <span class="stat-value count-up" style="color: ${t.color}" data-value="${t.value}">0</span>
     </div>
   `).join('') + `
-    <div class="stat-tile span-2 border-beam-auto" data-beam-color="var(--text-secondary)" data-beam-duration="4">
-       <span class="stat-label">HEALTH</span>
-       <span class="stat-value" style="color: var(--text-secondary); font-size: 14px; margin-top: 4px;">SYSTEM OPTIMAL</span>
+    <div class="stat-tile span-2 border-beam-auto health-tile" data-beam-color="var(--cp-cyan)" data-beam-duration="4">
+       <span class="stat-label">SYSTEM HEALTH</span>
+       <div id="health-indicators-stats" class="health-grid">
+          <div class="skeleton" style="height: 10px; width: 100%"></div>
+       </div>
+       <div class="sync-info-tile">
+         SYNC: <span id="last-sync-stats" class="sync-time-tile">—</span>
+       </div>
     </div>
     <div class="stat-tile wide">
       <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
@@ -90,11 +96,52 @@ async function updateStats() {
     if (!isNaN(val)) animateCounter(el, val);
   });
 
-  // Init border beams on new tiles
-  grid.querySelectorAll('.border-beam-auto').forEach(el => {
-    const { default: _, ...opts } = {};
-    el.classList.add('border-beam');
-    el.style.setProperty('--beam-color', el.dataset.beamColor || '#FCE300');
-    el.style.setProperty('--beam-duration', `${el.dataset.beamDuration || 3}s`);
-  });
+    grid.querySelectorAll('.border-beam-auto').forEach(el => {
+      const { default: _, ...opts } = {};
+      el.classList.add('border-beam');
+      el.style.setProperty('--beam-color', el.dataset.beamColor || '#FCE300');
+      el.style.setProperty('--beam-duration', `${el.dataset.beamDuration || 3}s`);
+    });
+
+    // Re-render health if statuses exist (persistence after refresh)
+    if (window.NAMM_STATUSES) {
+      updateStatsPanelHealth(window.NAMM_STATUSES);
+    }
+  } catch (err) {
+    console.error("[Stats] Render error:", err);
+  }
+}
+
+export function updateStatsPanelHealth(statuses) {
+  const container = document.getElementById('health-indicators-stats');
+  const syncTime = document.getElementById('last-sync-stats');
+  
+  if (container) {
+    const services = [
+      { id: 'jellyfin', label: 'JF' },
+      { id: 'radarr',   label: 'RD' },
+      { id: 'sonarr',   label: 'SN' },
+      { id: 'prowlarr', label: 'PR' }
+    ];
+
+    container.innerHTML = services.map(s => {
+      const status = statuses[s.id];
+      let stateClass = 'loading';
+      if (status === true) stateClass = 'online';
+      if (status === false) stateClass = 'offline';
+
+      return `
+        <div class="health-indicator-mini" title="${s.id.toUpperCase()}: ${stateClass.toUpperCase()}">
+          <div class="health-dot ${stateClass}"></div>
+          <span class="health-label-mini">${s.label}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  if (syncTime) {
+    syncTime.textContent = new Date().toLocaleTimeString([], {
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  }
 }
