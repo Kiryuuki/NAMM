@@ -33,12 +33,19 @@ ARR Cockpit is a high-density, Cyberpunk 2077-themed PWA dashboard designed for 
 - **Design System**: Strict adherence to the `DESIGN.md` tokens (CP Yellow, Cyan, Magenta) and zero border-radius policy.
 - **Atmosphere**: Scanline overlays and CRT boot flicker animations.
 
+### 2.5 Production Hardening & UI Polish (Phase 22)
+- **Runtime Environment Injection**: Re-architected configuration management to support Docker environment variables without image rebuilds (`config.js` injection).
+- **CI/CD Pipeline**: Automated image building and publishing to **GHCR** via GitHub Actions.
+- **Branding Relocation**: Moved `[ NAMM ]` branding to the sidebar footer (lower right) with improved versioning visibility.
+- **Health System Overhaul**: Replaced static status text with dynamic, glowing service indicators (JF, RD, SN, PR) and integrated sync timestamps.
+- **Discovery UX Refinement**: Unified navigation with a custom Cyberpunk scrollbar and cleaned up discovery card headers.
+
 ## 3. Technical Stack
 - **Build**: Vite 5
 - **Language**: Vanilla ES Modules
-- **Styling**: Vanilla CSS (Plain CSS + `style-upgrade.css`)
+- **Styling**: Vanilla CSS (Plain CSS + `style-upgrade.css` + `style-phase22.css`)
 - **PWA**: `vite-plugin-pwa` with offline shell
-- **Deployment**: Dockerized (Nginx + Multi-stage Node build)
+- **Deployment**: Dockerized with Runtime Config injection + GitHub Actions (GHCR)
 
 ## 4. Final Verification
 - [x] Production build (`npm run build`) successful.

@@ -46,3 +46,9 @@ coverage/
 build/
 bin/
 obj/
+
+# Internal / Agent Docs
+gemini.md
+DONE.md
+DESIGN.md
+.cortex/
